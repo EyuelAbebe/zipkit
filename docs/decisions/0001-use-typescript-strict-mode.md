@@ -15,6 +15,7 @@
 ZipKit is a security-focused Chrome extension that processes untrusted archive input. Archive processing involves complex data transformations, streaming, worker communication, and path validation—all areas where runtime type errors can lead to security vulnerabilities or data corruption.
 
 We need to choose TypeScript configuration that balances:
+
 - Developer productivity
 - Type safety
 - Security risk mitigation
@@ -64,9 +65,9 @@ Specifically, `tsconfig.json` includes:
 ### Risks
 
 - **Development friction**: Strict types might slow rapid prototyping
-  - *Mitigation*: Use `unknown` and type guards for truly dynamic data
+  - _Mitigation_: Use `unknown` and type guards for truly dynamic data
 - **Type assertions**: Developers might abuse `as` to bypass checker
-  - *Mitigation*: Code review enforcement, linting rules
+  - _Mitigation_: Code review enforcement, linting rules
 
 ---
 
@@ -77,11 +78,13 @@ Specifically, `tsconfig.json` includes:
 **Description:** Use TypeScript with default or partial strict settings
 
 **Pros:**
+
 - Faster initial development
 - Less friction for quick prototypes
 - Easier for less experienced TypeScript developers
 
 **Cons:**
+
 - Runtime type errors more likely
 - Less IDE assistance
 - Harder to refactor safely
@@ -94,11 +97,13 @@ Specifically, `tsconfig.json` includes:
 **Description:** Use JavaScript with type annotations via JSDoc comments
 
 **Pros:**
+
 - No TypeScript build step
 - Standard JavaScript
 - Some type checking via tooling
 
 **Cons:**
+
 - Weaker type checking than TypeScript
 - Verbose JSDoc syntax
 - Limited type system features
@@ -111,10 +116,12 @@ Specifically, `tsconfig.json` includes:
 **Description:** Use Facebook's Flow type system
 
 **Pros:**
+
 - Strong type system
 - Similar to TypeScript
 
 **Cons:**
+
 - Smaller ecosystem than TypeScript
 - Less tooling support
 - TypeScript has momentum in Chrome extension development
@@ -128,6 +135,7 @@ Specifically, `tsconfig.json` includes:
 ### Strict Mode Implications
 
 1. **Null checks required**:
+
    ```typescript
    // Before: Might crash
    const name = user.name.toUpperCase();
@@ -137,6 +145,7 @@ Specifically, `tsconfig.json` includes:
    ```
 
 2. **Indexed access safety**:
+
    ```typescript
    // noUncheckedIndexedAccess forces checking
    const value = obj[key]; // type: T | undefined

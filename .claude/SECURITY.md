@@ -84,6 +84,7 @@ Security warnings must be:
 - **Accurate** — never claim capabilities we don't have
 
 Example:
+
 ```
 ⚠️ Archive Safety Warning
 

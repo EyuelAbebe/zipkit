@@ -25,6 +25,7 @@ Issues will be created on GitHub and numbered automatically. This document provi
 **Summary:** Set up TypeScript strict mode, ESLint, and Prettier with appropriate rules and CI integration.
 
 **Scope:**
+
 - Install and configure TypeScript 5.x with strict mode
 - Configure ESLint with modern flat config
 - Configure Prettier
@@ -32,10 +33,12 @@ Issues will be created on GitHub and numbered automatically. This document provi
 - Create initial tsconfig.json for monorepo
 
 **Out of Scope:**
+
 - Package-specific tsconfig files (later)
 - Complex ESLint rules (start simple)
 
 **Acceptance Criteria:**
+
 - [ ] TypeScript strict mode enabled in tsconfig.json
 - [ ] ESLint runs without errors
 - [ ] Prettier formats code consistently
@@ -56,17 +59,20 @@ Issues will be created on GitHub and numbered automatically. This document provi
 **Summary:** Implement GitHub Actions CI workflow for format, lint, typecheck, test, and build.
 
 **Scope:**
+
 - Create `.github/workflows/ci.yml`
 - Jobs for format-check, lint, typecheck, test, build
 - Run on push to main and pull requests
 - Upload build artifacts
 
 **Out of Scope:**
+
 - E2E tests (separate workflow)
 - Release workflows (separate)
 - Matrix builds across Node versions
 
 **Acceptance Criteria:**
+
 - [ ] CI runs on PR and main branch pushes
 - [ ] All quality checks run (format, lint, typecheck, test, build)
 - [ ] Build artifacts uploaded
@@ -85,6 +91,7 @@ Issues will be created on GitHub and numbered automatically. This document provi
 **Summary:** Configure Playwright for browser E2E testing of Chrome extension.
 
 **Scope:**
+
 - Install Playwright
 - Configure for Chromium browser
 - Create E2E test directory structure
@@ -92,11 +99,13 @@ Issues will be created on GitHub and numbered automatically. This document provi
 - Add E2E workflow to GitHub Actions
 
 **Out of Scope:**
+
 - Comprehensive E2E tests (later phases)
 - Multi-browser testing
 - Visual regression testing
 
 **Acceptance Criteria:**
+
 - [ ] Playwright installed and configured
 - [ ] Smoke test successfully loads extension in browser
 - [ ] E2E tests run in CI
@@ -115,16 +124,19 @@ Issues will be created on GitHub and numbered automatically. This document provi
 **Summary:** Enable Dependabot for automated dependency updates and security alerts.
 
 **Scope:**
+
 - Create `.github/dependabot.yml`
 - Configure npm dependency updates
 - Configure GitHub Actions dependency updates
 - Set update schedule and PR limits
 
 **Out of Scope:**
+
 - Auto-merging dependency updates
 - Custom dependency grouping (initially)
 
 **Acceptance Criteria:**
+
 - [ ] Dependabot configured
 - [ ] Security alerts enabled
 - [ ] Dependency update PRs created automatically
@@ -142,6 +154,7 @@ Issues will be created on GitHub and numbered automatically. This document provi
 **Summary:** Create release scripts for RC creation, promotion, and version management.
 
 **Scope:**
+
 - Implement `scripts/release/verify.sh`
 - Implement `scripts/release/create-rc.sh`
 - Implement `scripts/release/promote.sh`
@@ -149,10 +162,12 @@ Issues will be created on GitHub and numbered automatically. This document provi
 - Document release process
 
 **Out of Scope:**
+
 - Chrome Web Store upload automation
 - Automated changelog generation
 
 **Acceptance Criteria:**
+
 - [ ] verify.sh validates release preconditions
 - [ ] create-rc.sh creates RC tags
 - [ ] promote.sh promotes RC to final release
@@ -175,16 +190,19 @@ Issues will be created on GitHub and numbered automatically. This document provi
 **Summary:** Evaluate JavaScript/WebAssembly ZIP libraries for browser compatibility, features, and performance.
 
 **Scope:**
+
 - Research candidate libraries (e.g., fflate, jszip, zip.js)
 - Evaluate: browser support, streaming, ZIP64, Web Worker compatibility, bundle size, maintenance
 - Test with sample archives
 - Document findings and recommendation in ADR
 
 **Out of Scope:**
+
 - Implementation of ZIP adapter
 - Password-protected ZIP support evaluation
 
 **Acceptance Criteria:**
+
 - [ ] At least 3 libraries evaluated
 - [ ] Performance tested with 1MB, 100MB, 1GB archives
 - [ ] Web Worker compatibility verified
@@ -204,16 +222,19 @@ Issues will be created on GitHub and numbered automatically. This document provi
 **Summary:** Evaluate JavaScript TAR and GZIP libraries for browser use.
 
 **Scope:**
+
 - Research TAR libraries (e.g., js-untar, tar-stream equivalents)
 - Research GZIP libraries (browser built-in CompressionStream, pako)
 - Evaluate streaming support, performance, browser compatibility
 - Document findings and recommendation in ADR
 
 **Out of Scope:**
+
 - TAR.GZ combined format handling (covered later)
 - Exotic TAR features (sparse files, extended attributes)
 
 **Acceptance Criteria:**
+
 - [ ] TAR library evaluated and selected
 - [ ] GZIP approach decided (built-in vs library)
 - [ ] Performance tested
@@ -232,6 +253,7 @@ Issues will be created on GitHub and numbered automatically. This document provi
 **Summary:** Design and document the ArchiveAdapter abstraction for format-agnostic archive operations.
 
 **Scope:**
+
 - Define ArchiveAdapter TypeScript interface
 - Define ArchiveEntry metadata structure
 - Define progress and cancellation model
@@ -239,10 +261,12 @@ Issues will be created on GitHub and numbered automatically. This document provi
 - Document in `docs/architecture/archive-engine.md`
 
 **Out of Scope:**
+
 - Implementation of concrete adapters
 - Streaming implementation details
 
 **Acceptance Criteria:**
+
 - [ ] ArchiveAdapter interface defined with TypeScript
 - [ ] Methods: inspect(), listEntries(), extract(), create()
 - [ ] Progress and cancellation patterns defined
@@ -262,6 +286,7 @@ Issues will be created on GitHub and numbered automatically. This document provi
 **Summary:** Investigate Chrome File System Access API for local file selection and saving.
 
 **Scope:**
+
 - Research File System Access API capabilities
 - Test file/directory picking
 - Test file saving
@@ -269,10 +294,12 @@ Issues will be created on GitHub and numbered automatically. This document provi
 - Document findings and limitations
 
 **Out of Scope:**
+
 - Full implementation
 - Fallback for unsupported browsers
 
 **Acceptance Criteria:**
+
 - [ ] File picker tested
 - [ ] Directory picker tested
 - [ ] File saving tested
@@ -292,6 +319,7 @@ Issues will be created on GitHub and numbered automatically. This document provi
 **Summary:** Design message protocol for main thread ↔ Web Worker communication for archive operations.
 
 **Scope:**
+
 - Define command message types (inspect, extract, create, cancel)
 - Define response message types (progress, entry, complete, error)
 - Define progress reporting structure
@@ -299,10 +327,12 @@ Issues will be created on GitHub and numbered automatically. This document provi
 - Document protocol in architecture docs
 
 **Out of Scope:**
+
 - Worker implementation
 - Transferable object optimization (initially)
 
 **Acceptance Criteria:**
+
 - [ ] Message protocol defined with TypeScript types
 - [ ] Command/response patterns documented
 - [ ] Progress reporting structure defined
@@ -326,6 +356,7 @@ Issues will be created on GitHub and numbered automatically. This document provi
 **Summary:** Set up Chrome Manifest V3 extension with minimal permissions.
 
 **Scope:**
+
 - Create `apps/extension/manifest.json` with Manifest V3
 - Define minimal permissions (storage only initially)
 - Set up icons and branding
@@ -333,11 +364,13 @@ Issues will be created on GitHub and numbered automatically. This document provi
 - Create basic build process
 
 **Out of Scope:**
+
 - Popup UI implementation
 - Background service worker logic
 - Advanced permissions
 
 **Acceptance Criteria:**
+
 - [ ] Manifest V3 valid and loads in Chrome
 - [ ] Only storage permission requested
 - [ ] Icons present and display correctly
@@ -356,6 +389,7 @@ Issues will be created on GitHub and numbered automatically. This document provi
 **Summary:** Create extension popup with quick actions.
 
 **Scope:**
+
 - Design and implement popup HTML/CSS/JS
 - "Open Archive" button
 - "Create Archive" button
@@ -363,11 +397,13 @@ Issues will be created on GitHub and numbered automatically. This document provi
 - Link to workspace
 
 **Out of Scope:**
+
 - Full workspace implementation
 - Settings panel
 - Complex UI framework (keep vanilla or lightweight)
 
 **Acceptance Criteria:**
+
 - [ ] Popup appears when extension icon clicked
 - [ ] Buttons present and styled
 - [ ] Clicking "Open Archive" triggers file picker
@@ -386,17 +422,20 @@ Issues will be created on GitHub and numbered automatically. This document provi
 **Summary:** Set up full browser tab workspace for archive operations.
 
 **Scope:**
+
 - Create workspace HTML structure
 - Basic routing (inspect, extract, create views)
 - Layout with sidebar and main content area
 - Navigation between views
 
 **Out of Scope:**
+
 - Archive processing functionality
 - Complex UI components
 - Full design implementation
 
 **Acceptance Criteria:**
+
 - [ ] Workspace opens in new tab
 - [ ] Navigation between views works
 - [ ] Layout responsive and functional
@@ -410,7 +449,7 @@ Issues will be created on GitHub and numbered automatically. This document provi
 
 ---
 
-*For brevity, Phase 2-12 issues follow similar format. See full backlog in GitHub Issues once created.*
+_For brevity, Phase 2-12 issues follow similar format. See full backlog in GitHub Issues once created._
 
 # Issue Creation Guide
 
@@ -429,27 +468,34 @@ For each issue definition:
 
 ```markdown
 ## Summary
+
 [1-2 sentence summary]
 
 ## Scope
+
 - [What's included]
 
 ## Out of Scope
+
 - [What's explicitly not included]
 
 ## Acceptance Criteria
+
 - [ ] Criterion 1
 - [ ] Criterion 2
 
 ## Dependencies
+
 - Blocked by #[issue number]
 - Requires completion of #[issue number]
 
 ## Related Documentation
+
 - [Link to architecture docs]
 - [Link to ADRs]
 
 ## Notes
+
 [Any additional context]
 ```
 

@@ -7,24 +7,28 @@ The archive engine is responsible for reading, writing, and analyzing archive fi
 ## Design Principles
 
 ### Format Abstraction
+
 - Common interface for all archive formats
 - Format-specific implementations isolated
 - Easy to add new formats
 - Format detection automatic
 
 ### Streaming-First
+
 - Never load entire archive into memory
 - Process incrementally
 - Bounded memory usage
 - Support arbitrarily large files
 
 ### Worker-Based
+
 - CPU-intensive operations in Web Workers
 - Main thread remains responsive
 - Cancellable operations
 - Progress reporting
 
 ### Safety-Integrated
+
 - All operations validate security
 - Path traversal prevention
 - Expansion monitoring
@@ -43,10 +47,7 @@ interface ArchiveAdapter {
   canHandle(fileHeader: Uint8Array): boolean;
 
   // Inspection
-  inspect(
-    file: FileSystemFileHandle,
-    options?: InspectOptions
-  ): AsyncIterable<ArchiveEntry>;
+  inspect(file: FileSystemFileHandle, options?: InspectOptions): AsyncIterable<ArchiveEntry>;
 
   // Extraction
   extract(
@@ -122,6 +123,7 @@ interface ArchiveEntry {
 ### ZIP Adapter
 
 **Implementation:**
+
 - Central Directory scanning for inspection
 - Local File Header parsing for extraction
 - ZIP64 support for large files
@@ -129,12 +131,14 @@ interface ArchiveEntry {
 - Store method (uncompressed)
 
 **Characteristics:**
+
 - Random access to entries
 - Fast inspection without decompression
 - Metadata at end of file
 - Well-supported across tools
 
 **Complexity:**
+
 - Variable compression methods
 - ZIP64 extensions
 - Data descriptor handling
@@ -143,18 +147,21 @@ interface ArchiveEntry {
 ### TAR Adapter
 
 **Implementation:**
+
 - Sequential entry scanning
 - POSIX ustar format support
 - Extended PAX headers for metadata
 - No compression (handled by wrapper)
 
 **Characteristics:**
+
 - Sequential access only
 - Simple format
 - Preserves Unix permissions
 - Symlink support
 
 **Complexity:**
+
 - Multiple TAR formats (ustar, pax, gnu)
 - Long filename handling
 - Sparse file support
@@ -163,18 +170,21 @@ interface ArchiveEntry {
 ### GZIP Adapter
 
 **Implementation:**
+
 - Single-file compression wrapper
 - Header parsing
 - Deflate decompression
 - CRC32 validation
 
 **Characteristics:**
+
 - Wraps single file
 - Often combined with TAR
 - Fast compression
 - Wide support
 
 **Complexity:**
+
 - Multi-member files
 - Extra headers
 - Footer validation
@@ -182,17 +192,20 @@ interface ArchiveEntry {
 ### TAR.GZ Adapter
 
 **Implementation:**
+
 - Combines GZIP and TAR adapters
 - Two-stage processing
 - Streaming decompression to TAR parser
 
 **Characteristics:**
+
 - Unix standard for archives
 - Good compression
 - Preserves attributes
 - Sequential only
 
 **Complexity:**
+
 - Two-layer parsing
 - Memory efficient streaming
 - Error propagation across layers
@@ -227,6 +240,7 @@ UI Display
 ```
 
 **Benefits:**
+
 - Incremental display
 - Early cancellation
 - Bounded memory
@@ -254,6 +268,7 @@ Progress Events
 ```
 
 **Benefits:**
+
 - Progressive extraction
 - Memory bounded by chunk size
 - Cancellable mid-stream
@@ -281,6 +296,7 @@ Progress Events
 ```
 
 **Benefits:**
+
 - Handle large source files
 - Memory efficient
 - Cancel during creation
@@ -400,23 +416,27 @@ class ArchiveAdapter {
 ### Error Categories
 
 **Format Errors:**
+
 - Invalid archive structure
 - Unsupported compression method
 - Corrupt data
 - Truncated archive
 
 **File System Errors:**
+
 - Permission denied
 - Disk full
 - Path too long
 - Invalid filename characters
 
 **Security Errors:**
+
 - Path traversal detected
 - Expansion limit exceeded
 - Symbolic link escape
 
 **Resource Errors:**
+
 - Out of memory
 - Worker crash
 - Browser quota exceeded
@@ -434,18 +454,21 @@ interface OperationError {
 ```
 
 **Fatal Errors:**
+
 - Stop operation immediately
 - Report to user
 - Cleanup resources
 - No retry
 
 **Recoverable Errors:**
+
 - Log error
 - Skip problematic entry
 - Continue with remaining entries
 - Report in summary
 
 **Warnings:**
+
 - Log warning
 - Continue operation
 - Report in summary
@@ -459,8 +482,19 @@ interface OperationError {
 // Command messages (Main → Worker)
 type WorkerCommand =
   | { type: 'inspect'; fileHandle: FileSystemFileHandle; options?: InspectOptions }
-  | { type: 'extract'; fileHandle: FileSystemFileHandle; entries: ArchiveEntry[]; destination: FileSystemDirectoryHandle; options?: ExtractOptions }
-  | { type: 'create'; sources: FileSystemHandle[]; destination: FileSystemFileHandle; options?: CreateOptions }
+  | {
+      type: 'extract';
+      fileHandle: FileSystemFileHandle;
+      entries: ArchiveEntry[];
+      destination: FileSystemDirectoryHandle;
+      options?: ExtractOptions;
+    }
+  | {
+      type: 'create';
+      sources: FileSystemHandle[];
+      destination: FileSystemFileHandle;
+      options?: CreateOptions;
+    }
   | { type: 'cancel' };
 
 // Event messages (Worker → Main)
@@ -496,12 +530,14 @@ Main Thread                   Worker
 ### Worker Pooling Strategy
 
 **MVP Approach:**
+
 - One worker per operation
 - Worker created on demand
 - Terminated after completion
 - No pooling
 
 **Future Optimization:**
+
 - Worker pool with configurable size
 - Reuse workers across operations
 - Parallel processing of multiple archives
@@ -512,9 +548,7 @@ Main Thread                   Worker
 ### Detection Strategy
 
 ```typescript
-async function detectFormat(
-  fileHandle: FileSystemFileHandle
-): Promise<ArchiveFormat> {
+async function detectFormat(fileHandle: FileSystemFileHandle): Promise<ArchiveFormat> {
   // Read first 512 bytes
   const file = await fileHandle.getFile();
   const header = new Uint8Array(await file.slice(0, 512).arrayBuffer());
@@ -533,23 +567,28 @@ async function detectFormat(
 ### Format Signatures
 
 **ZIP:**
+
 - Starts with `50 4B 03 04` (PK\x03\x04)
 - Or `50 4B 05 06` (empty ZIP)
 
 **TAR:**
+
 - Magic bytes at offset 257: `75 73 74 61 72` ("ustar")
 - Or older TAR formats (structural detection)
 
 **GZIP:**
+
 - Starts with `1F 8B` (gzip magic)
 - Followed by compression method (usually `08`)
 
 **TAR.GZ:**
+
 - GZIP signature + TAR content after decompression
 
 ### Fallback Detection
 
 If signature detection fails:
+
 - Try file extension
 - Attempt parsing with each adapter
 - Prompt user for format
@@ -594,18 +633,21 @@ class SafeArchiveAdapter implements ArchiveAdapter {
 ### Safety Checks During Operations
 
 **Inspection:**
+
 - Path traversal detection
 - Executable identification
 - Nested archive detection
 - Symlink analysis
 
 **Extraction:**
+
 - Path validation before write
 - Expansion ratio monitoring
 - Disk space checking
 - Symlink target validation
 
 **Creation:**
+
 - Source path validation
 - Size limit checking
 - Permission preservation
@@ -622,11 +664,13 @@ class SafeArchiveAdapter implements ArchiveAdapter {
 ### Parallelization Opportunities
 
 **Not Parallelized in MVP:**
+
 - Single archive processed sequentially
 - Entry-by-entry processing
 - Single worker per operation
 
 **Future Parallelization:**
+
 - Multiple archive inspection
 - Parallel entry extraction (ZIP only)
 - Multi-threaded compression

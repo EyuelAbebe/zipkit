@@ -7,18 +7,21 @@ ZipKit is a Chrome extension that provides local-first archive creation, extract
 ## Architectural Principles
 
 ### Local-First Design
+
 - All archive processing occurs in the browser
 - No remote servers or cloud dependencies
 - User data never leaves the local machine
 - Works offline
 
 ### Performance-First
+
 - Web Workers for CPU-intensive operations
 - Streaming architecture for large files
 - Bounded memory usage
 - Cancellable long-running operations
 
 ### Security-First
+
 - Minimal Chrome extension permissions
 - All archive input treated as untrusted
 - Structural safety analysis before extraction
@@ -100,6 +103,7 @@ extension → ui → shared
 ### Package Responsibilities
 
 **@zipkit/archive-core**
+
 - Archive format detection
 - Format-specific adapters (ZIP, TAR, GZIP)
 - Streaming read/write operations
@@ -108,6 +112,7 @@ extension → ui → shared
 - Cancellation handling
 
 **@zipkit/archive-security**
+
 - Path traversal detection
 - Expansion ratio analysis
 - Executable file detection
@@ -116,6 +121,7 @@ extension → ui → shared
 - Risk assessment and reporting
 
 **@zipkit/shared**
+
 - Common TypeScript types
 - Utility functions
 - Constants and configuration
@@ -123,6 +129,7 @@ extension → ui → shared
 - Validation helpers
 
 **@zipkit/ui**
+
 - React components
 - File browser UI
 - Progress indicators
@@ -133,6 +140,7 @@ extension → ui → shared
 ## Browser APIs Used
 
 ### File System Access API
+
 - Select files for archiving
 - Choose extraction destination
 - Read archive files
@@ -140,18 +148,21 @@ extension → ui → shared
 - Directory creation
 
 ### Web Workers API
+
 - Offload CPU-intensive archive processing
 - Maintain UI responsiveness
 - Parallel format processing
 - Structured message passing
 
 ### Streams API
+
 - Process large archives incrementally
 - Bounded memory usage
 - Backpressure handling
 - Transform streams for compression/decompression
 
 ### Chrome Extension APIs (Minimal Set)
+
 - `storage.local` — Persist user preferences
 - `tabs` — Open workspace in new tab
 - No host permissions required
@@ -298,18 +309,21 @@ Main Thread                          Web Worker
 ## Extension Boundaries
 
 ### No Content Scripts
+
 - Extension doesn't inject into web pages
 - Reduces attack surface
 - Simplifies security model
 - No host permissions needed
 
 ### No Network Access
+
 - No remote API calls
 - No telemetry or analytics
 - No update checks beyond Chrome Web Store
 - Complete offline functionality
 
 ### Minimal Permissions
+
 - Only request permissions actually needed
 - No broad host permissions
 - No cross-origin requests
@@ -318,18 +332,21 @@ Main Thread                          Web Worker
 ## State Management
 
 ### Extension State
+
 - User preferences in `chrome.storage.local`
 - Recent archives list
 - Default extraction paths
 - Safety warning preferences
 
 ### Operation State
+
 - Active operations tracked in memory
 - Progress state in worker
 - Cancellation tokens
 - No persistent operation state
 
 ### UI State
+
 - React component state
 - No global store for MVP
 - Props-based communication
@@ -338,18 +355,21 @@ Main Thread                          Web Worker
 ## Error Handling Strategy
 
 ### Archive Processing Errors
+
 - Graceful degradation
 - Partial extraction support
 - Clear error messages to user
 - No silent failures
 
 ### Worker Errors
+
 - Caught and reported to main thread
 - Worker termination on unrecoverable error
 - Operation can be retried
 - User informed of failure reason
 
 ### File System Errors
+
 - Permission denied
 - Out of disk space
 - Invalid paths
@@ -406,18 +426,21 @@ Security Checks:
 ## Future Extension Points
 
 ### Additional Formats
+
 - Add new format adapter implementing common interface
 - Register adapter with archive-core
 - Add worker for format
 - No UI changes required
 
 ### Advanced Safety Features
+
 - Extend archive-security package
 - Add new analyzers
 - Compose with existing checks
 - New warning types in UI
 
 ### Cloud Integration (Non-MVP)
+
 - Optional package for cloud providers
 - Extension maintains local-first core
 - User opt-in required

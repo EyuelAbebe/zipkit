@@ -7,18 +7,21 @@ This document describes the data flow patterns in ZipKit for core operations: ar
 ## Core Flow Principles
 
 ### Streaming-First
+
 - Data flows incrementally, never fully buffered
 - Bounded memory usage regardless of archive size
 - Early results displayed progressively
 - Cancellable at any stage
 
 ### Local-Only
+
 - All data flows within the browser
 - No network requests
 - No remote servers
 - User's data never leaves their machine
 
 ### User-Initiated
+
 - All operations start with explicit user action
 - File System Access API provides security
 - Clear permission boundaries

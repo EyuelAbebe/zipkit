@@ -36,10 +36,7 @@ See SECURITY.md for details.
 
 **Attacker's goal:**
 
-**Attack steps:**
-1.
-2.
-3.
+**Attack steps:** 1. 2. 3.
 
 **Impact without this enhancement:**
 
@@ -54,6 +51,7 @@ See SECURITY.md for details.
 <!-- How would users be warned or protected? -->
 
 **Warning message (if applicable):**
+
 ```
 Example warning text
 ```

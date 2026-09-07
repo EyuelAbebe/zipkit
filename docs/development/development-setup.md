@@ -34,6 +34,7 @@ npm install
 ```
 
 This will install dependencies for:
+
 - Root project tooling (TypeScript, ESLint, Prettier)
 - Extension workspace (`apps/extension/`)
 - Website workspace (`apps/website/`)
@@ -58,6 +59,7 @@ All checks should pass on a clean checkout.
 To test the extension locally:
 
 1. **Build the extension** (when build script is implemented):
+
    ```bash
    npm run build
    ```

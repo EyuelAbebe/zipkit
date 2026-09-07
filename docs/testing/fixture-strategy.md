@@ -9,6 +9,7 @@ Test fixtures are the archive files used to validate ZipKit's functionality. The
 ### 1. Never Use Random Internet Archives
 
 **Why Not**:
+
 - Unknown contents (could contain actual malware)
 - Non-deterministic (file may change or disappear)
 - Legal concerns (licensing, copyright)
@@ -16,6 +17,7 @@ Test fixtures are the archive files used to validate ZipKit's functionality. The
 - Opaque (hard to know what you're testing)
 
 **Instead**:
+
 - Create purpose-built synthetic fixtures
 - Document exactly what each fixture contains
 - Generate programmatically when possible
@@ -24,12 +26,14 @@ Test fixtures are the archive files used to validate ZipKit's functionality. The
 ### 2. Never Commit Real Malware
 
 **Why Not**:
+
 - Security risk to developers
 - May trigger antivirus false positives
 - Legal and ethical concerns
 - Unnecessary for testing
 
 **Instead**:
+
 - Create synthetic "attack" archives that demonstrate patterns without actual payloads
 - Use path traversal strings without harmful executables
 - Simulate zip bombs with mathematical patterns, not real bombs
@@ -38,6 +42,7 @@ Test fixtures are the archive files used to validate ZipKit's functionality. The
 ### 3. Create Purpose-Built Synthetic Fixtures
 
 **Characteristics of Good Fixtures**:
+
 - **Minimal**: Only contains what's needed for the test
 - **Documented**: Clear purpose and contents
 - **Deterministic**: Always produces same results
@@ -47,6 +52,7 @@ Test fixtures are the archive files used to validate ZipKit's functionality. The
 ### 4. Fixtures are Code
 
 Treat fixtures with the same care as code:
+
 - Review in pull requests
 - Document purpose and contents
 - Keep organized and named clearly
@@ -62,6 +68,7 @@ Purpose: Test standard archive handling
 **Required Fixtures**:
 
 **small-archive.zip**
+
 - 1-3 files
 - Total size: <10 KB
 - Simple filenames (ASCII, no spaces)
@@ -69,6 +76,7 @@ Purpose: Test standard archive handling
 - Purpose: Fast smoke tests
 
 **medium-archive.zip**
+
 - 10-50 files
 - Total size: 100-500 KB
 - Mixed filenames (Unicode, spaces, special chars)
@@ -76,17 +84,20 @@ Purpose: Test standard archive handling
 - Purpose: Typical real-world archive
 
 **large-archive.zip**
+
 - 100-500 files
 - Total size: 5-10 MB
 - Deep directory structure (5+ levels)
 - Purpose: Performance and memory testing
 
 **empty-archive.zip**
+
 - 0 files
 - Valid ZIP structure
 - Purpose: Edge case handling
 
 **single-file.zip**
+
 - 1 file
 - Purpose: Minimal valid archive
 
@@ -95,11 +106,13 @@ Purpose: Test standard archive handling
 Purpose: Validate security protections
 
 **path-traversal-simple.zip**
+
 - Contains: `../../../etc/passwd` (or similar)
 - Purpose: Basic path traversal detection
 - Safe because: No actual payload, just path string
 
 **path-traversal-variations.zip**
+
 - Contains multiple patterns:
   - `..\\..\\..\\Windows\\System32\\`
   - `....//....//....//`
@@ -109,17 +122,20 @@ Purpose: Validate security protections
 - Safe because: No executable content
 
 **high-compression-ratio.zip**
+
 - Contains: Small file that expands to ~100 MB
 - Compression ratio: >100:1
 - Purpose: Zip bomb detection
 - Safe because: Controlled expansion, no infinite recursion
 
 **symlink-escape.zip**
+
 - Contains: Symlink pointing outside archive
 - Purpose: Symlink attack detection
 - Safe because: No actual target, just link structure
 
 **absolute-paths.zip**
+
 - Contains: Files with absolute paths (C:\, /etc/, etc.)
 - Purpose: Absolute path rejection
 - Safe because: No executable content
@@ -129,21 +145,25 @@ Purpose: Validate security protections
 Purpose: Test error handling and robustness
 
 **corrupted-header.zip**
+
 - Invalid ZIP header bytes
 - Purpose: Graceful failure on corruption
 - Expected behavior: Clear error message
 
 **truncated-archive.zip**
+
 - Valid header, incomplete data
 - Purpose: Handle incomplete downloads
 - Expected behavior: Clear error message
 
 **invalid-compression.zip**
+
 - Declares unsupported compression method
 - Purpose: Handle unknown compression
 - Expected behavior: Clear error message
 
 **missing-central-directory.zip**
+
 - Local headers present, central directory missing
 - Purpose: Handle malformed structure
 - Expected behavior: Clear error message
@@ -153,16 +173,19 @@ Purpose: Test error handling and robustness
 Purpose: Test edge cases and special features
 
 **password-protected.zip**
+
 - Contains: Encrypted files
 - Password: "test123" (documented)
 - Purpose: Password detection and handling
 
 **nested-archives.zip**
+
 - Contains: archive1.zip containing archive2.zip
 - Purpose: Nested archive detection
 - Depth: 2-3 levels
 
 **unicode-filenames.zip**
+
 - Contains files with names in:
   - Japanese (日本語)
   - Arabic (العربية)
@@ -171,6 +194,7 @@ Purpose: Test edge cases and special features
 - Purpose: Unicode handling
 
 **special-characters.zip**
+
 - Contains files with names including:
   - Spaces
   - Quotes (' ")
@@ -179,10 +203,12 @@ Purpose: Test edge cases and special features
 - Purpose: Filename sanitization
 
 **empty-files.zip**
+
 - Contains: Multiple 0-byte files
 - Purpose: Handle empty content
 
 **large-file.zip**
+
 - Contains: Single file >100 MB
 - Purpose: Large file handling
 - Note: May not commit to git (generate in tests)
@@ -227,12 +253,14 @@ tests/
 Each fixture should be documented in `tests/fixtures/README.md`:
 
 **Template**:
+
 ```markdown
 ## fixture-name.zip
 
 **Purpose**: Brief description of test purpose
 
 **Contents**:
+
 - File 1: description
 - File 2: description
 - ...
@@ -251,6 +279,7 @@ Each fixture should be documented in `tests/fixtures/README.md`:
 Some fixtures should be generated by scripts:
 
 **Benefits**:
+
 - Reproducible from source
 - No large binary files in git
 - Easy to modify and regenerate
@@ -258,12 +287,14 @@ Some fixtures should be generated by scripts:
 - Transparent contents
 
 **When to Generate**:
+
 - Large files (>1 MB)
 - Files with predictable patterns
 - Security test cases (ensures safety)
 - Multiple variations of same pattern
 
 **When to Commit Binary**:
+
 - Small files (<100 KB)
 - Complex structure hard to script
 - One-off edge cases
@@ -286,13 +317,9 @@ function createPathTraversalFixture() {
   // Add file with path traversal
   zip.file('../../../etc/passwd', 'fake-content');
 
-  return zip.generateAsync({ type: 'nodebuffer' })
-    .then(buffer => {
-      fs.writeFileSync(
-        'tests/fixtures/security/path-traversal-simple.zip',
-        buffer
-      );
-    });
+  return zip.generateAsync({ type: 'nodebuffer' }).then((buffer) => {
+    fs.writeFileSync('tests/fixtures/security/path-traversal-simple.zip', buffer);
+  });
 }
 ```
 
@@ -311,7 +338,7 @@ function createZipBomb() {
   return zip.generateAsync({
     type: 'nodebuffer',
     compression: 'DEFLATE',
-    compressionOptions: { level: 9 }
+    compressionOptions: { level: 9 },
   });
 }
 ```
@@ -321,12 +348,14 @@ function createZipBomb() {
 Option to generate fixtures in CI if too large for git:
 
 **Strategy**:
+
 1. Commit generator scripts
 2. Run generators before tests
 3. Use generated files in tests
 4. Don't persist generated files
 
 **Trade-offs**:
+
 - Pro: No large binaries in git
 - Pro: Always fresh fixtures
 - Con: Adds CI time
@@ -339,6 +368,7 @@ Option to generate fixtures in CI if too large for git:
 Validate fixtures remain correct:
 
 **Checksum Verification**:
+
 ```javascript
 // Ensure fixtures haven't been corrupted
 const expectedChecksums = {
@@ -355,11 +385,13 @@ test('fixtures have expected checksums', () => {
 ```
 
 **Structure Validation**:
+
 - Verify fixture contains expected files
 - Verify file counts
 - Verify no unexpected contents
 
 **Security Validation**:
+
 - Scan fixtures with antivirus
 - Verify no actual malware
 - Verify attack patterns are synthetic
@@ -369,12 +401,14 @@ test('fixtures have expected checksums', () => {
 ### When to Update Fixtures
 
 **Update when**:
+
 - Test requirements change
 - Bug revealed missing edge case
 - New attack pattern discovered
 - Better synthetic version available
 
 **Don't update**:
+
 - For cosmetic reasons
 - Without documenting changes
 - Without regenerating checksums
@@ -383,6 +417,7 @@ test('fixtures have expected checksums', () => {
 ### Version Control
 
 **Commit Messages**:
+
 ```
 Add fixture for Unicode filename handling
 
@@ -392,6 +427,7 @@ Add fixture for Unicode filename handling
 ```
 
 **Review Checklist**:
+
 - [ ] Purpose documented
 - [ ] Contents documented
 - [ ] No actual malware
@@ -406,6 +442,7 @@ Add fixture for Unicode filename handling
 **Issue**: Text files in archives may have platform-specific line endings
 
 **Solution**:
+
 - Use binary files or normalize in tests
 - Document expected line endings
 - Test line ending handling explicitly if relevant
@@ -415,6 +452,7 @@ Add fixture for Unicode filename handling
 **Issue**: Windows uses backslash, Unix uses forward slash
 
 **Solution**:
+
 - Test both separator types
 - Use path normalization in code
 - Fixtures should test both formats
@@ -424,6 +462,7 @@ Add fixture for Unicode filename handling
 **Issue**: Unix has executable bits, Windows doesn't
 
 **Solution**:
+
 - Document fixture expectations
 - Test permission handling where relevant
 - May need platform-specific fixtures
@@ -443,6 +482,7 @@ Add fixture for Unicode filename handling
 Antivirus may flag security test fixtures:
 
 **Solutions**:
+
 - Add fixtures directory to AV exceptions (document this)
 - Use clearly synthetic patterns (e.g., "FAKE-MALWARE-TEST")
 - Keep fixtures outside main codebase if necessary
@@ -453,11 +493,13 @@ Antivirus may flag security test fixtures:
 ### Across Test Types
 
 Same fixtures should work for:
+
 - Unit tests
 - Integration tests
 - E2E tests
 
 **Benefits**:
+
 - Consistency
 - Reduced maintenance
 - Shared understanding
@@ -465,6 +507,7 @@ Same fixtures should work for:
 ### Across Projects
 
 Consider publishing fixture set as separate package if useful to broader community:
+
 - Other ZIP tools could use same tests
 - Standardizes security testing
 - Community contributions
@@ -472,6 +515,7 @@ Consider publishing fixture set as separate package if useful to broader communi
 ## Conclusion
 
 Good test fixtures are:
+
 1. **Safe**: No actual malware, no harmful content
 2. **Synthetic**: Purpose-built for testing
 3. **Documented**: Clear purpose and contents

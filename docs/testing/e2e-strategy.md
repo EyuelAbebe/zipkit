@@ -7,9 +7,10 @@ End-to-end (E2E) tests validate ZipKit in a real browser environment with the ex
 ## Why E2E Tests Matter for Extensions
 
 Browser extensions have unique testing challenges:
+
 - They run in a special browser context
 - They interact with real web pages
-- They use browser-specific APIs (chrome.*, browser.*)
+- They use browser-specific APIs (chrome._, browser._)
 - They have special permissions and security contexts
 - They respond to real browser events
 
@@ -20,6 +21,7 @@ E2E tests are the only way to validate these interactions work correctly in prod
 ### Why Playwright
 
 **Strengths**:
+
 - Native extension testing support for Chromium and Firefox
 - Can load unpacked extensions
 - Real browser automation (not JSDOM)
@@ -29,6 +31,7 @@ E2E tests are the only way to validate these interactions work correctly in prod
 - Active development and good documentation
 
 **Limitations**:
+
 - Extension support varies by browser (best in Chromium)
 - Slower than unit/integration tests
 - Requires browser binaries
@@ -47,11 +50,8 @@ E2E tests are the only way to validate these interactions work correctly in prod
 ```javascript
 // Conceptual example - not actual code
 const context = await chromium.launchPersistentContext(userDataDir, {
-  headless: false,  // Extensions often require headed mode
-  args: [
-    `--disable-extensions-except=${extensionPath}`,
-    `--load-extension=${extensionPath}`,
-  ],
+  headless: false, // Extensions often require headed mode
+  args: [`--disable-extensions-except=${extensionPath}`, `--load-extension=${extensionPath}`],
 });
 ```
 
@@ -68,9 +68,11 @@ const context = await chromium.launchPersistentContext(userDataDir, {
 ### Core User Stories to Test
 
 #### 1. Archive Inspection
+
 **Story**: User downloads a ZIP file and wants to see what's inside before extracting
 
 **Test Flow**:
+
 1. Navigate to page with archive download link
 2. Click download link
 3. Verify extension popup appears
@@ -79,6 +81,7 @@ const context = await chromium.launchPersistentContext(userDataDir, {
 6. Verify no warnings for safe archive
 
 **Assertions**:
+
 - Popup renders
 - File count is accurate
 - File sizes are displayed
@@ -86,9 +89,11 @@ const context = await chromium.launchPersistentContext(userDataDir, {
 - UI is responsive
 
 #### 2. Archive Extraction
+
 **Story**: User extracts files from inspected archive
 
 **Test Flow**:
+
 1. Open archive (as in story 1)
 2. Click extract button
 3. Select destination (may be automatic in test)
@@ -96,6 +101,7 @@ const context = await chromium.launchPersistentContext(userDataDir, {
 5. Verify files exist at destination
 
 **Assertions**:
+
 - Extract button is enabled
 - Progress indication shown
 - Success message displayed
@@ -103,9 +109,11 @@ const context = await chromium.launchPersistentContext(userDataDir, {
 - Extracted files have correct content
 
 #### 3. Security Warning Display
+
 **Story**: User downloads malicious archive and sees clear warning
 
 **Test Flow**:
+
 1. Download archive with path traversal
 2. Verify warning appears prominently
 3. Verify warning explains the risk
@@ -113,6 +121,7 @@ const context = await chromium.launchPersistentContext(userDataDir, {
 5. Verify warning details are accessible
 
 **Assertions**:
+
 - Warning badge/icon visible
 - Warning text is clear
 - Risk level indicated
@@ -120,21 +129,25 @@ const context = await chromium.launchPersistentContext(userDataDir, {
 - User can view details
 
 **Test Variations**:
+
 - Path traversal attack
 - Zip bomb (high compression)
 - Suspicious filenames
 - Nested archive bombs
 
 #### 4. Safe Archive Confirmation
+
 **Story**: User sees confirmation that a legitimate archive is safe
 
 **Test Flow**:
+
 1. Download known-good archive
 2. Verify no warnings appear
 3. Verify "safe" indicator shown
 4. Verify all features enabled
 
 **Assertions**:
+
 - No warning badges
 - Extract button enabled
 - Positive safety indication
@@ -147,6 +160,7 @@ const context = await chromium.launchPersistentContext(userDataDir, {
 E2E tests need archives available via HTTP(S) for download simulation.
 
 **Options**:
+
 1. **Local test server**: Serve fixtures from tests/fixtures/ via HTTP
 2. **Data URLs**: Encode small fixtures as data URLs
 3. **File protocol**: Direct file:// URLs (limited browser support)
@@ -169,6 +183,7 @@ tests/
 Use the same synthetic fixtures as unit tests (see [fixture-strategy.md](./fixture-strategy.md)).
 
 **Benefits**:
+
 - Consistency across test types
 - Known, controlled data
 - No external dependencies
@@ -181,17 +196,20 @@ Use the same synthetic fixtures as unit tests (see [fixture-strategy.md](./fixtu
 Always capture diagnostic information when tests fail:
 
 **Screenshots**:
+
 - Capture full page at failure point
 - Capture extension popup state
 - Capture any error dialogs
 
 **Traces**:
+
 - Playwright trace with network activity
 - Console logs (page and extension)
 - Network requests and responses
 - Timeline of actions
 
 **Storage**:
+
 - Save to test-results/ directory
 - Include test name in filename
 - Attach to CI artifacts
@@ -205,10 +223,10 @@ test('archive inspection', async ({ page, context }) => {
     // Test steps...
   } catch (error) {
     await page.screenshot({
-      path: `test-results/${test.info().title}-failure.png`
+      path: `test-results/${test.info().title}-failure.png`,
     });
     await context.tracing.stop({
-      path: `test-results/${test.info().title}-trace.zip`
+      path: `test-results/${test.info().title}-trace.zip`,
     });
     throw error;
   }
@@ -220,16 +238,19 @@ test('archive inspection', async ({ page, context }) => {
 ### Operating System Differences
 
 **File Paths**:
+
 - Windows: Backslashes, drive letters (C:\)
 - Unix: Forward slashes, root (/)
 - Test path handling works on all platforms
 
 **File Permissions**:
+
 - Unix: chmod, executable bits matter
 - Windows: Different permission model
 - May need platform-specific fixture variations
 
 **Line Endings**:
+
 - Windows: CRLF (\r\n)
 - Unix: LF (\n)
 - Usually not relevant for binary archives
@@ -237,12 +258,14 @@ test('archive inspection', async ({ page, context }) => {
 ### Browser Differences
 
 **Chromium vs Firefox**:
+
 - API differences (chrome.* vs browser.*)
 - Different extension security models
 - Different popup behavior
 - May need browser-specific test code paths
 
 **Strategy**:
+
 - Test critical flows on both browsers
 - Accept some platform-specific behavior
 - Document known differences
@@ -254,16 +277,19 @@ test('archive inspection', async ({ page, context }) => {
 E2E tests are slow by nature. Optimize without sacrificing reliability:
 
 **Parallelization**:
+
 - Run independent tests in parallel
 - Use separate browser contexts
 - Playwright supports automatic parallelization
 
 **Test Scope**:
+
 - Don't E2E test what unit tests can cover
 - Focus on integration points and user workflows
 - One E2E test per critical user story, not per function
 
 **Setup/Teardown**:
+
 - Reuse browser contexts when possible
 - Don't restart browser for every test
 - Clean state between tests, not browser instances
@@ -271,11 +297,13 @@ E2E tests are slow by nature. Optimize without sacrificing reliability:
 ### Resource Usage
 
 **Browser Instances**:
+
 - Multiple browsers consume significant memory
 - Limit parallel browser count on CI
 - Close contexts when done
 
 **Fixtures**:
+
 - Keep test archives small when possible
 - Large files only when testing large file handling
 - Consider memory constraints on CI runners
@@ -304,11 +332,13 @@ tests/
 Use descriptive, user-focused names:
 
 **Good**:
+
 - "User sees warning for path traversal archive"
 - "User can extract safe archive successfully"
 - "Extension shows file list for multi-file archive"
 
 **Bad**:
+
 - "Test case 1"
 - "Archive test"
 - "checkPathTraversal()"
@@ -318,16 +348,19 @@ Use descriptive, user-focused names:
 ### Local Development
 
 **Run in headed mode**:
+
 - See what the browser is doing
 - Interact manually if needed
 - Observe timing issues
 
 **Use breakpoints**:
+
 - Playwright supports debugger statements
 - Pause and inspect page state
 - Step through test code
 
 **Slow motion mode**:
+
 - Slow down test execution
 - See each action clearly
 - Identify race conditions
@@ -335,12 +368,14 @@ Use descriptive, user-focused names:
 ### CI Debugging
 
 **Artifacts**:
+
 - Always save screenshots on failure
 - Save trace files for replay
 - Include console logs
 - Capture video if practical
 
 **Reproducibility**:
+
 - Use same browser versions locally
 - Match CI environment variables
 - Test on same OS when possible
@@ -358,21 +393,25 @@ Use descriptive, user-focused names:
 ### Prevention Strategies
 
 **Use explicit waits**:
+
 - Wait for specific elements, not arbitrary timeouts
 - Wait for network idle
 - Wait for animations to complete
 
 **Isolate tests**:
+
 - Clean state before each test
 - Don't share data between tests
 - Use separate browser contexts
 
 **Use deterministic fixtures**:
+
 - No random data generation
 - Fixed timestamps
 - Controlled ordering
 
 **Avoid flaky selectors**:
+
 - Use data-testid attributes
 - Avoid brittle CSS selectors
 - Don't rely on text that may change
@@ -382,6 +421,7 @@ Use descriptive, user-focused names:
 ### PR Checks
 
 Run subset of E2E tests on every PR:
+
 - Smoke test: One happy path test
 - Security test: One warning test
 - Fast execution (<2 minutes)
@@ -389,6 +429,7 @@ Run subset of E2E tests on every PR:
 ### Nightly Builds
 
 Run full E2E suite nightly:
+
 - All user story tests
 - Cross-browser tests
 - Performance tests
@@ -397,6 +438,7 @@ Run full E2E suite nightly:
 ### Pre-Release
 
 Run comprehensive suite before release:
+
 - All platforms
 - All supported browsers
 - Extended test scenarios
@@ -407,6 +449,7 @@ Run comprehensive suite before release:
 ### Test Quality
 
 Good E2E tests are:
+
 - **Reliable**: Pass consistently, no flakes
 - **Fast**: Complete in reasonable time
 - **Clear**: Obvious what failed and why
@@ -416,6 +459,7 @@ Good E2E tests are:
 ### Coverage Goals
 
 Don't aim for 100% E2E coverage. Focus on:
+
 - Critical user workflows (must test)
 - Security features (must test)
 - Cross-browser compatibility (should test)
@@ -426,21 +470,25 @@ Don't aim for 100% E2E coverage. Focus on:
 ### Potential Additions
 
 **Visual regression testing**:
+
 - Screenshot comparison
 - Detect unintended UI changes
 - Require manual approval for intentional changes
 
 **Performance testing**:
+
 - Measure extension load time
 - Track memory usage
 - Monitor large file handling
 
 **Accessibility testing**:
+
 - Keyboard navigation
 - Screen reader compatibility
 - ARIA attributes
 
 **Mobile testing**:
+
 - Chrome on Android
 - Firefox on Android
 - Mobile browser quirks
@@ -448,6 +496,7 @@ Don't aim for 100% E2E coverage. Focus on:
 ## Conclusion
 
 E2E tests are expensive but essential for extension quality. Use them strategically:
+
 - Test complete user workflows, not individual functions
 - Use synthetic fixtures for speed and reliability
 - Capture diagnostics to debug failures quickly

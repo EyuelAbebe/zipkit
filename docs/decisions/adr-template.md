@@ -15,6 +15,7 @@
 What is the issue we're facing in this context? What factors are influencing this decision?
 
 Include:
+
 - Problem statement
 - Business/technical drivers
 - Constraints
@@ -59,10 +60,12 @@ What other options did we evaluate and why were they not chosen?
 **Description:** Brief description
 
 **Pros:**
+
 - Advantage 1
 - Advantage 2
 
 **Cons:**
+
 - Disadvantage 1
 - Disadvantage 2
 

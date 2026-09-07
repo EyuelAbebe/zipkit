@@ -213,33 +213,40 @@ Your archives are private.
 ## Roadmap
 
 ### Phase 0: Foundation (Current)
+
 - Repository governance ✅
 - Architecture documentation ✅
 - Development standards ✅
 - CI/CD foundation (in progress)
 
 ### Phase 1-2: Extension Shell
+
 - Manifest V3 setup
 - Popup and workspace UI
 - Local file selection
 
 ### Phase 3-4: Archive Support
+
 - ZIP implementation
 - TAR/GZIP implementation
 
 ### Phase 5-6: Safety & Inspection
+
 - Archive inspection UI
 - Safety scanning engine
 
 ### Phase 7-8: UX Polish
+
 - Creation experience
 - Extraction experience
 
 ### Phase 9-10: Integration
+
 - Download integration
 - Public website
 
 ### Phase 11-12: Hardening & Release
+
 - Cross-platform testing
 - Performance optimization
 - Official v0.1.0 release

@@ -130,11 +130,13 @@ Do not use for:
 Each commit should represent **one coherent change**:
 
 ✅ **Good:** Separate commits for:
+
 - Implementing a feature
 - Adding tests for that feature
 - Updating docs for that feature
 
 ❌ **Bad:** Single commit containing:
+
 - Three unrelated features
 - Bug fix
 - Dependency update

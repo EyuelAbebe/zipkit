@@ -44,10 +44,12 @@ Example code, UI mockup, or workflow description
 
 **In scope:**
 -
+
 -
 
 **Out of scope:**
 -
+
 -
 
 ## Technical Considerations

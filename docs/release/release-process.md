@@ -47,6 +47,7 @@ ZipKit follows a structured release process with release candidates for validati
 ### 2. Create Release Candidate
 
 1. **Create RC Tag**
+
    ```bash
    # Create and tag the release candidate
    git add package.json apps/extension/manifest.json CHANGELOG.md
@@ -68,6 +69,7 @@ ZipKit follows a structured release process with release candidates for validati
 ### 3. Validation
 
 **Automated Testing:**
+
 - All CI/CD checks must pass
 - Unit tests: `npm run test:unit`
 - Integration tests: `npm run test:integration`
@@ -75,6 +77,7 @@ ZipKit follows a structured release process with release candidates for validati
 - Security scans (automated via CI)
 
 **Manual Testing:**
+
 - Load extension in Chrome (developer mode)
 - Test core functionality:
   - Archive creation (zip/unzip)
@@ -86,6 +89,7 @@ ZipKit follows a structured release process with release candidates for validati
 - Verify permissions and security features
 
 **Review Checklist:**
+
 - [ ] All automated tests pass
 - [ ] Manual testing completed without critical issues
 - [ ] Documentation is up to date
@@ -94,6 +98,7 @@ ZipKit follows a structured release process with release candidates for validati
 - [ ] UI/UX is polished and functional
 
 **If issues are found:**
+
 - Fix the issues
 - Increment RC number (`vX.Y.Z-rc.2`, `vX.Y.Z-rc.3`, etc.)
 - Repeat validation process
@@ -103,6 +108,7 @@ ZipKit follows a structured release process with release candidates for validati
 **Once RC is validated:**
 
 1. **Create Release Tag**
+
    ```bash
    # Update version to remove RC suffix (if still present)
    # Commit final changelog updates
@@ -126,6 +132,7 @@ ZipKit follows a structured release process with release candidates for validati
 **Note:** This step will be implemented when the extension is ready for public distribution.
 
 1. **Build Production Version**
+
    ```bash
    npm run build:production
    ```
@@ -167,6 +174,7 @@ ZipKit follows a structured release process with release candidates for validati
 **For critical bugs in production:**
 
 1. **Create Hotfix Branch**
+
    ```bash
    git checkout -b hotfix/vX.Y.Z+1 vX.Y.Z
    ```
@@ -186,6 +194,7 @@ ZipKit follows a structured release process with release candidates for validati
    - Ensure no regressions
 
 5. **Merge and Release**
+
    ```bash
    git checkout main
    git merge hotfix/vX.Y.Z+1

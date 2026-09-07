@@ -15,22 +15,28 @@ Before implementing any change, read the documents relevant to your task:
 ### Read Based on Task Type
 
 **For all pull requests:**
+
 - PULL_REQUESTS.md
 
 **For branch creation:**
+
 - BRANCHES.md
 
 **For code changes:**
+
 - ISSUE_EXECUTION.md
 - Relevant product/architecture documentation in `/docs/`
 
 **For test-related work:**
+
 - TESTING.md
 
 **For release work:**
+
 - RELEASES.md
 
 **For security-sensitive changes:**
+
 - SECURITY.md
 - `/docs/security/` documentation
 

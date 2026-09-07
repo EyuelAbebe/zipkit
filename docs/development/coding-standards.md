@@ -27,6 +27,7 @@ Do not disable these options without explicit architectural justification and te
 When TypeScript raises strict errors:
 
 ✅ **Good**: Fix the actual issue
+
 ```typescript
 // Add proper null checks
 if (entry.name !== undefined) {
@@ -35,8 +36,9 @@ if (entry.name !== undefined) {
 ```
 
 ❌ **Bad**: Use type assertions to bypass checks
+
 ```typescript
-processEntry(entry.name!);  // Dangerous: assumes non-null without verification
+processEntry(entry.name!); // Dangerous: assumes non-null without verification
 ```
 
 ## Commit Message Standards
@@ -68,6 +70,7 @@ Use **Conventional Commits** format for all commits.
 ### Examples
 
 ✅ **Good**:
+
 ```
 feat: add TAR archive extraction support
 
@@ -77,6 +80,7 @@ for proper decompression pipeline.
 ```
 
 ❌ **Bad**:
+
 ```
 Add stuff  // Missing type, too vague
 ```
@@ -90,6 +94,7 @@ See `.claude/COMMITS.md` for comprehensive commit standards.
 Use names that reveal intent and purpose:
 
 ✅ **Good**:
+
 ```typescript
 function detectPathTraversal(entryPath: string): boolean
 const MAX_EXPANSION_RATIO = 10000
@@ -97,6 +102,7 @@ interface ArchiveSecurityReport
 ```
 
 ❌ **Bad**:
+
 ```typescript
 function check(p: string): boolean  // Too generic
 const MAX = 10000  // What maximum?
@@ -126,6 +132,7 @@ Write full words unless the abbreviation is universally understood:
 Each function should do **one thing well**:
 
 ✅ **Good**:
+
 ```typescript
 function parseZipEntry(data: Uint8Array): ZipEntry {
   // Single responsibility: parse entry
@@ -137,6 +144,7 @@ function validateZipEntry(entry: ZipEntry): ValidationResult {
 ```
 
 ❌ **Bad**:
+
 ```typescript
 function parseAndValidateAndExtractZipEntry(data: Uint8Array, dest: string) {
   // Multiple unrelated responsibilities
@@ -155,6 +163,7 @@ function parseAndValidateAndExtractZipEntry(data: Uint8Array, dest: string) {
 - **4+ parameters**: Consider using an options object
 
 ✅ **Good**:
+
 ```typescript
 interface ExtractionOptions {
   destination: string;
@@ -169,6 +178,7 @@ function extractArchive(archive: Archive, options: ExtractionOptions) {
 ```
 
 ❌ **Bad**:
+
 ```typescript
 function extractArchive(
   archive: Archive,
@@ -189,18 +199,20 @@ function extractArchive(
 Code should be self-documenting for **what** it does. Use comments to explain **why**.
 
 ✅ **Good**:
+
 ```typescript
 // ZIP64 format uses 0xFFFFFFFF as sentinel value to indicate
 // that actual size is stored in ZIP64 extended information
-if (header.compressedSize === 0xFFFFFFFF) {
+if (header.compressedSize === 0xffffffff) {
   return parseZip64ExtendedInfo(header);
 }
 ```
 
 ❌ **Bad**:
+
 ```typescript
 // Check if compressed size equals 0xFFFFFFFF
-if (header.compressedSize === 0xFFFFFFFF) {
+if (header.compressedSize === 0xffffffff) {
   // Parse ZIP64 info
   return parseZip64ExtendedInfo(header);
 }
@@ -240,14 +252,16 @@ async function inspectArchive(file: File): Promise<ArchiveMetadata> {
 Remove all debug logging before committing:
 
 ❌ **Bad**:
+
 ```typescript
 function processEntry(entry: ArchiveEntry) {
-  console.log('Processing:', entry.name);  // Debug logging
+  console.log('Processing:', entry.name); // Debug logging
   // ...
 }
 ```
 
 ✅ **Good**: Use proper logging utility (if implemented):
+
 ```typescript
 function processEntry(entry: ArchiveEntry) {
   logger.debug('Processing entry', { entryName: entry.name });
@@ -276,7 +290,10 @@ class PathTraversalError extends Error {
 }
 
 class CorruptedArchiveError extends Error {
-  constructor(message: string, public readonly details?: unknown) {
+  constructor(
+    message: string,
+    public readonly details?: unknown
+  ) {
     super(message);
     this.name = 'CorruptedArchiveError';
   }
@@ -288,6 +305,7 @@ class CorruptedArchiveError extends Error {
 Don't silently swallow errors:
 
 ❌ **Bad**:
+
 ```typescript
 try {
   await extractArchive(file);
@@ -297,6 +315,7 @@ try {
 ```
 
 ✅ **Good**:
+
 ```typescript
 try {
   await extractArchive(file);
@@ -306,7 +325,7 @@ try {
   } else if (error instanceof CorruptedArchiveError) {
     showCorruptionError(error.message);
   } else {
-    throw error;  // Re-throw unexpected errors
+    throw error; // Re-throw unexpected errors
   }
 }
 ```
@@ -338,6 +357,7 @@ function extractEntry(entry: ArchiveEntry, destination: string): void {
 Prefer `async/await` over raw promises for readability:
 
 ✅ **Good**:
+
 ```typescript
 async function loadAndInspectArchive(file: File): Promise<ArchiveMetadata> {
   const buffer = await file.arrayBuffer();
@@ -347,10 +367,11 @@ async function loadAndInspectArchive(file: File): Promise<ArchiveMetadata> {
 ```
 
 ❌ **Bad**:
+
 ```typescript
 function loadAndInspectArchive(file: File): Promise<ArchiveMetadata> {
-  return file.arrayBuffer().then(buffer => {
-    return parseMetadata(buffer).then(metadata => {
+  return file.arrayBuffer().then((buffer) => {
+    return parseMetadata(buffer).then((metadata) => {
       return metadata;
     });
   });
@@ -362,18 +383,20 @@ function loadAndInspectArchive(file: File): Promise<ArchiveMetadata> {
 Every promise must be either awaited or have a `.catch()`:
 
 ❌ **Bad**:
+
 ```typescript
 async function processFiles(files: File[]) {
-  files.forEach(file => {
-    processFile(file);  // Unhandled promise!
+  files.forEach((file) => {
+    processFile(file); // Unhandled promise!
   });
 }
 ```
 
 ✅ **Good**:
+
 ```typescript
 async function processFiles(files: File[]) {
-  await Promise.all(files.map(file => processFile(file)));
+  await Promise.all(files.map((file) => processFile(file)));
 }
 ```
 
@@ -382,16 +405,18 @@ async function processFiles(files: File[]) {
 Execute independent operations in parallel:
 
 ✅ **Good**:
+
 ```typescript
 // Independent operations - run in parallel
 const [metadata, checksum, securityReport] = await Promise.all([
   extractMetadata(file),
   computeChecksum(file),
-  scanForThreats(file)
+  scanForThreats(file),
 ]);
 ```
 
 ❌ **Bad**:
+
 ```typescript
 // Independent operations - unnecessarily sequential
 const metadata = await extractMetadata(file);
@@ -406,6 +431,7 @@ const securityReport = await scanForThreats(file);
 Delete code that is not used:
 
 ❌ **Bad**:
+
 ```typescript
 // function oldExtractMethod(file: File) {
 //   // Old implementation...
@@ -417,6 +443,7 @@ function extractArchive(file: File) {
 ```
 
 ✅ **Good**:
+
 ```typescript
 function extractArchive(file: File) {
   // New implementation

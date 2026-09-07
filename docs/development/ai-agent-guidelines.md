@@ -17,14 +17,14 @@ This document provides guidelines for AI coding agents (including Claude, GitHub
 
 #### Required by Task Type
 
-| Task Type | Read These Documents |
-|-----------|---------------------|
-| All PRs | `.claude/PULL_REQUESTS.md` |
-| Creating branches | `.claude/BRANCHES.md` |
-| Code changes | `.claude/ISSUE_EXECUTION.md`, relevant `/docs/` files |
-| Tests | `.claude/TESTING.md` |
-| Security changes | `.claude/SECURITY.md`, `/docs/security/` |
-| Releases | `.claude/RELEASES.md` |
+| Task Type         | Read These Documents                                  |
+| ----------------- | ----------------------------------------------------- |
+| All PRs           | `.claude/PULL_REQUESTS.md`                            |
+| Creating branches | `.claude/BRANCHES.md`                                 |
+| Code changes      | `.claude/ISSUE_EXECUTION.md`, relevant `/docs/` files |
+| Tests             | `.claude/TESTING.md`                                  |
+| Security changes  | `.claude/SECURITY.md`, `/docs/security/`              |
+| Releases          | `.claude/RELEASES.md`                                 |
 
 ### 2. Understand the Issue
 
@@ -52,6 +52,7 @@ If documentation is unclear or contradictory:
 **Never include AI attribution** in any repository metadata:
 
 ❌ **Forbidden**:
+
 - Commit messages: "Generated with Claude Code"
 - Commit trailers: `Co-Authored-By: Claude <noreply@anthropic.com>`
 - PR descriptions: "Created by AI"
@@ -60,6 +61,7 @@ If documentation is unclear or contradictory:
 - Issue comments: "Claude suggests..."
 
 ✅ **Allowed**:
+
 - Writing code and commits as if written by a human developer
 - Following the same standards as human contributors
 - Documenting the engineering reasoning, not the tool used
@@ -94,6 +96,7 @@ Label the new issue appropriately and link it to the current work.
 ### One Logical Change Per Commit
 
 ✅ **Good**: Separate commits for:
+
 ```
 feat: add TAR archive format detection
 test: add TAR format detection test fixtures
@@ -101,6 +104,7 @@ docs: document TAR format support
 ```
 
 ❌ **Bad**: Single commit for:
+
 ```
 feat: add TAR support, fix ZIP bug, refactor security, update deps
 ```
@@ -112,6 +116,7 @@ feat: add TAR support, fix ZIP bug, refactor security, update deps
 - **Break up unrelated changes** into separate PRs
 
 When a change grows too large, consider:
+
 1. Breaking it into multiple smaller PRs
 2. Creating a tracking issue with subtasks
 3. Implementing in phases with feature flags
@@ -139,11 +144,13 @@ When a change grows too large, consider:
 If tests fail after your change:
 
 ✅ **Good**:
+
 - Fix the implementation to match the test
 - Update the test if requirements changed (document why)
 - Add new tests for new behavior
 
 ❌ **Bad**:
+
 - Comment out failing tests
 - Use `.skip` without creating issue
 - Weaken assertions to make tests pass
@@ -233,6 +240,7 @@ When documentation conflicts:
 4. **Git history** shows past reasoning
 
 If you find contradictions:
+
 - **Create an issue** to resolve the conflict
 - **Do not guess** which source is correct
 - **Ask for clarification** from maintainers
@@ -250,6 +258,7 @@ The following are **non-negotiable**:
 - Small, focused changes
 
 If you believe a `.claude/` rule should change:
+
 1. **Create an issue** proposing the change with reasoning
 2. **Get maintainer approval** before proceeding
 3. **Update documentation** as part of the change
@@ -259,12 +268,14 @@ If you believe a `.claude/` rule should change:
 ### Pitfall: Scope Creep
 
 ❌ **Bad**:
+
 ```
 Issue: "Fix ZIP extraction bug"
 PR: "Fix ZIP bug, add TAR support, refactor security engine, update all deps"
 ```
 
 ✅ **Good**:
+
 ```
 Issue: "Fix ZIP extraction bug"
 PR: "Fix ZIP extraction bug"
@@ -274,6 +285,7 @@ Follow-up issues created for other improvements
 ### Pitfall: Weakening Safety
 
 ❌ **Bad**:
+
 ```typescript
 // TypeScript complains about undefined, so let's use any
 function process(entry: any) {
@@ -282,6 +294,7 @@ function process(entry: any) {
 ```
 
 ✅ **Good**:
+
 ```typescript
 function process(entry: ArchiveEntry): string {
   if (entry.name === undefined) {
@@ -294,6 +307,7 @@ function process(entry: ArchiveEntry): string {
 ### Pitfall: Silent Failures
 
 ❌ **Bad**:
+
 ```typescript
 try {
   await validateArchive(file);
@@ -303,6 +317,7 @@ try {
 ```
 
 ✅ **Good**:
+
 ```typescript
 try {
   await validateArchive(file);
@@ -310,19 +325,21 @@ try {
   if (error instanceof SecurityError) {
     showSecurityWarning(error);
   }
-  throw error;  // Propagate for caller to handle
+  throw error; // Propagate for caller to handle
 }
 ```
 
 ### Pitfall: Missing Tests
 
 ❌ **Bad**:
+
 ```
 "The existing tests should cover this change"
 // Adds new feature without new tests
 ```
 
 ✅ **Good**:
+
 ```
 "Adding tests for new TAR extraction feature"
 test: add TAR extraction test fixtures
@@ -333,6 +350,7 @@ test: add E2E test for TAR file workflow
 ### Pitfall: Premature Abstraction
 
 ❌ **Bad**:
+
 ```typescript
 // Abstract base class for potential future archive formats
 // that don't exist yet
@@ -342,6 +360,7 @@ abstract class BaseArchiveAdapterFactoryProvider {
 ```
 
 ✅ **Good**:
+
 ```typescript
 // Simple interface for current needs
 interface ArchiveAdapter {

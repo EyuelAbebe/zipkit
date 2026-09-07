@@ -107,6 +107,7 @@ After approval and passing CI:
 **All significant work originates from a GitHub issue.**
 
 Required for:
+
 - New features
 - Security changes
 - Permission changes
@@ -188,6 +189,7 @@ See [.claude/COMMITS.md](.claude/COMMITS.md).
 ```
 
 Examples:
+
 - `feature/42-zip-entry-inspection`
 - `fix/87-path-traversal-vulnerability`
 - `docs/95-architecture-diagrams`

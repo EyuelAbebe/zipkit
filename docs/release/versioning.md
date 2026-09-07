@@ -53,6 +53,7 @@ ZipKit is currently in pre-1.0.0 phase, which has special rules:
 ### When to Release 1.0.0
 
 Release `1.0.0` when:
+
 - Core functionality is complete and stable
 - API is finalized and documented
 - Extensive testing has been performed
@@ -66,6 +67,7 @@ Versions must be synchronized across multiple files:
 ### Required Files
 
 1. **`package.json`**
+
    ```json
    {
      "version": "0.1.0"
@@ -73,6 +75,7 @@ Versions must be synchronized across multiple files:
    ```
 
 2. **`apps/extension/manifest.json`** (when implemented)
+
    ```json
    {
      "version": "0.1.0"
@@ -95,6 +98,7 @@ Versions must be synchronized across multiple files:
 5. Push commits and tags
 
 **Example:**
+
 ```bash
 # Update package.json version to 0.2.0
 # Update manifest.json version to 0.2.0
@@ -111,6 +115,7 @@ git push origin main --tags
 **Format:** `vX.Y.Z`
 
 **Examples:**
+
 - `v0.1.0`: First pre-release
 - `v0.2.0`: Second pre-release with new features
 - `v1.0.0`: First stable release
@@ -124,6 +129,7 @@ git push origin main --tags
 Where `N` is the release candidate number (1, 2, 3, etc.)
 
 **Examples:**
+
 - `v0.1.0-rc.1`: First release candidate for v0.1.0
 - `v0.1.0-rc.2`: Second release candidate for v0.1.0
 - `v1.0.0-rc.1`: First release candidate for v1.0.0
@@ -131,6 +137,7 @@ Where `N` is the release candidate number (1, 2, 3, etc.)
 ### Pre-release Tags
 
 **Other pre-release identifiers (when needed):**
+
 - `vX.Y.Z-alpha.N`: Alpha releases (very unstable)
 - `vX.Y.Z-beta.N`: Beta releases (feature complete, stabilizing)
 - `vX.Y.Z-rc.N`: Release candidates (final testing)
@@ -152,32 +159,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - New features not yet released
 
 ### Changed
+
 - Changes to existing functionality
 
 ### Fixed
+
 - Bug fixes
 
 ## [0.2.0] - 2024-03-15
 
 ### Added
+
 - Archive security scanning feature
 - Password protection for ZIP files
 - Batch archive processing
 
 ### Changed
+
 - Improved UI performance
 - Updated compression algorithm
 
 ### Fixed
+
 - Fixed extraction error with nested folders
 - Resolved memory leak in file preview
 
 ## [0.1.0] - 2024-02-01
 
 ### Added
+
 - Initial release
 - ZIP file creation
 - ZIP file extraction
@@ -198,12 +212,14 @@ Use these standard sections (in order):
 ### Changelog Maintenance
 
 **During development:**
+
 - Add entries to "Unreleased" section
 - Keep entries organized by section
 - Use clear, user-facing language
 - Include issue/PR references when relevant
 
 **Before release:**
+
 - Move "Unreleased" items to new version section
 - Add release date: `## [X.Y.Z] - YYYY-MM-DD`
 - Create new empty "Unreleased" section
@@ -214,23 +230,27 @@ Use these standard sections (in order):
 ### Should I increment MAJOR? (X.0.0)
 
 **Post-1.0.0:**
+
 - Breaking API changes
 - Removal of deprecated features
 - Fundamental architectural changes
 - Incompatible with previous version
 
 **Pre-1.0.0:**
+
 - Not applicable (stay at 0.x.x)
 
 ### Should I increment MINOR? (0.Y.0)
 
 **Post-1.0.0:**
+
 - New features (backwards-compatible)
 - New functionality
 - Deprecation of features (not removal)
 - Significant internal improvements
 
 **Pre-1.0.0:**
+
 - New features (may include breaking changes)
 - Significant functionality additions
 - Major improvements
@@ -238,6 +258,7 @@ Use these standard sections (in order):
 ### Should I increment PATCH? (0.0.Z)
 
 **Post-1.0.0 and Pre-1.0.0:**
+
 - Bug fixes
 - Security patches
 - Performance improvements (no new features)
@@ -266,11 +287,13 @@ Chrome extensions use a specific version format:
 ### Examples
 
 **Valid:**
+
 - `"version": "0.1.0"`
 - `"version": "1.0.0"`
 - `"version": "1.2.3.4"`
 
 **Invalid:**
+
 - `"version": "1.0"` (too few components)
 - `"version": "1.0.0-rc.1"` (contains non-numeric characters)
 
@@ -297,11 +320,13 @@ For release candidates, use `version_name`:
 ### Deprecation Timeline
 
 **Post-1.0.0:**
+
 - Deprecate in MINOR release (e.g., 1.1.0)
 - Remove in next MAJOR release (e.g., 2.0.0)
 - Minimum 1 MAJOR version notice period
 
 **Pre-1.0.0:**
+
 - Deprecate in one MINOR release
 - May remove in next MINOR release
 - At least 1 MINOR version notice period recommended
@@ -318,6 +343,7 @@ When comparing versions:
 4. Pre-release versions have lower precedence than release versions
 
 **Examples (lowest to highest):**
+
 - `0.1.0-alpha.1`
 - `0.1.0-beta.1`
 - `0.1.0-rc.1`
@@ -357,6 +383,7 @@ When comparing versions:
 ### Future Improvements
 
 Consider automating:
+
 - Version bumping with scripts
 - Changelog generation from commits
 - Tag creation from version
