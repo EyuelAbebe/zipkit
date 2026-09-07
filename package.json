@@ -33,13 +33,15 @@
     "test": "echo 'Tests not yet implemented' && exit 0",
     "test:unit": "echo 'Unit tests not yet implemented' && exit 0",
     "test:integration": "echo 'Integration tests not yet implemented' && exit 0",
-    "test:e2e": "echo 'E2E tests not yet implemented' && exit 0",
+    "test:e2e": "playwright test",
     "build": "npm run build --workspaces --if-present",
     "clean": "rm -rf node_modules dist build out coverage .nyc_output"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/node": "^20.0.0",
     "eslint": "^9.0.0",
+    "playwright": "^1.63.0",
     "prettier": "^3.0.0",
     "typescript": "^5.0.0"
   }
