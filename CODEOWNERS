@@ -1,0 +1,36 @@
+# ZipKit Code Owners
+#
+# This file defines ownership and review requirements for sensitive areas.
+# Even with a single initial maintainer, these boundaries establish
+# heightened review expectations for future growth.
+
+# Default ownership
+* @eyuelabebe
+
+# Archive core processing (high impact)
+/packages/archive-core/ @eyuelabebe
+
+# Security engine (critical)
+/packages/archive-security/ @eyuelabebe
+
+# Extension manifest and permissions (critical)
+/apps/extension/manifest.json @eyuelabebe
+
+# GitHub Actions and CI (high impact)
+/.github/workflows/ @eyuelabebe
+
+# Release scripts (critical)
+/scripts/release/ @eyuelabebe
+
+# Dependency configuration (security-sensitive)
+/package.json @eyuelabebe
+/package-lock.json @eyuelabebe
+/pnpm-lock.yaml @eyuelabebe
+/yarn.lock @eyuelabebe
+
+# Agent governance
+/.claude/ @eyuelabebe
+
+# Security policy
+/SECURITY.md @eyuelabebe
+/docs/security/ @eyuelabebe

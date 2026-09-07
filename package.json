@@ -1,0 +1,45 @@
+{
+  "name": "zipkit",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Zip. Unzip. Pack. Unpack. Inspect. Scan. A modern Chrome extension and browser-based archive utility.",
+  "keywords": [
+    "zip",
+    "archive",
+    "compression",
+    "chrome-extension",
+    "browser",
+    "security"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eyuelabebe/zipkit.git"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "echo 'Tests not yet implemented' && exit 0",
+    "test:unit": "echo 'Unit tests not yet implemented' && exit 0",
+    "test:integration": "echo 'Integration tests not yet implemented' && exit 0",
+    "test:e2e": "echo 'E2E tests not yet implemented' && exit 0",
+    "build": "echo 'Build not yet implemented' && exit 0",
+    "clean": "rm -rf node_modules dist build out coverage .nyc_output"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
+  }
+}

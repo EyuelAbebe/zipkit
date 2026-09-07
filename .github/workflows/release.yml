@@ -1,0 +1,150 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 0.1.0)'
+        required: true
+      release_type:
+        description: 'Release type'
+        required: true
+        type: choice
+        options:
+          - rc
+          - final
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    name: Validate Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run all checks
+        run: |
+          npm run format:check
+          npm run lint
+          npm run typecheck
+          npm run test
+          npm run build
+
+  build-release:
+    name: Build Release Artifacts
+    needs: validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for production
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Package extension
+        run: |
+          cd apps/extension/dist
+          zip -r ../../../zipkit-extension.zip ./*
+          cd ../../..
+
+      - name: Generate checksums
+        run: |
+          sha256sum zipkit-extension.zip > zipkit-extension.zip.sha256
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: |
+            zipkit-extension.zip
+            zipkit-extension.zip.sha256
+
+  create-release:
+    name: Create GitHub Release
+    needs: build-release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-artifacts
+
+      - name: Determine if prerelease
+        id: prerelease
+        run: |
+          if [[ "${{ github.ref_name }}" == *"-rc."* ]]; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Extract changelog
+        id: changelog
+        run: |
+          VERSION="${{ github.ref_name }}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          # TODO: Extract relevant changelog section
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ZipKit ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          prerelease: ${{ steps.prerelease.outputs.is_prerelease }}
+          files: |
+            zipkit-extension.zip
+            zipkit-extension.zip.sha256
+          body: |
+            ## ZipKit ${{ github.ref_name }}
+
+            **Release Type:** ${{ steps.prerelease.outputs.is_prerelease == 'true' && 'Release Candidate' || 'Official Release' }}
+
+            See [CHANGELOG.md](https://github.com/eyuelabebe/zipkit/blob/main/CHANGELOG.md) for details.
+
+            ### Installation
+
+            1. Download `zipkit-extension.zip`
+            2. Verify checksum with `zipkit-extension.zip.sha256`
+            3. Extract the ZIP file
+            4. Load unpacked extension in Chrome (chrome://extensions/)
+
+            ### Verification
+
+            ```bash
+            sha256sum -c zipkit-extension.zip.sha256
+            ```
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
