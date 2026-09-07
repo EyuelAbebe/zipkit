@@ -34,7 +34,7 @@
     "test:unit": "echo 'Unit tests not yet implemented' && exit 0",
     "test:integration": "echo 'Integration tests not yet implemented' && exit 0",
     "test:e2e": "echo 'E2E tests not yet implemented' && exit 0",
-    "build": "echo 'Build not yet implemented' && exit 0",
+    "build": "npm run build --workspaces --if-present",
     "clean": "rm -rf node_modules dist build out coverage .nyc_output"
   },
   "devDependencies": {

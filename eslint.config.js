@@ -1,6 +1,15 @@
 export default [
   {
-    ignores: ['node_modules/**', 'dist/**', 'build/**', 'out/**', 'coverage/**', '*.config.js'],
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'build/**',
+      'out/**',
+      'coverage/**',
+      '*.config.js',
+      '**/*.d.ts',
+      'tsconfig.tsbuildinfo',
+    ],
   },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
