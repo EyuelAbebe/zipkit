@@ -23,6 +23,7 @@ Follow the template in `.github/PULL_REQUEST_TEMPLATE.md`:
 Concise explanation of what changed.
 
 Example:
+
 ```
 Implements ZIP central directory reading and exposes archive entries
 through the ArchiveAdapter interface.
@@ -33,6 +34,7 @@ through the ArchiveAdapter interface.
 Why the change exists. Provide product, architectural, security, or bug context.
 
 Example:
+
 ```
 ZipKit needs to inspect ZIP archives before extraction to show users
 the contents and detect security risks. This PR implements the core
@@ -44,6 +46,7 @@ inspection capability using streaming central directory parsing.
 Focused explanation of the actual implementation.
 
 Example:
+
 ```
 - Added ZipAdapter implementing ArchiveAdapter interface
 - Implemented streaming central directory parser
@@ -64,6 +67,7 @@ Call out anything the reviewer should understand before reading the diff:
 - Deliberately deferred work
 
 Example:
+
 ```
 The implementation uses streaming ZIP parsing rather than loading the entire
 central directory to support multi-GB archives within browser memory limits.
@@ -106,6 +110,7 @@ For non-UI changes: "N/A — no UI changes"
 Describe known risks or behavioral changes.
 
 Examples:
+
 ```
 - Changes extraction path validation — existing malformed archives may now be rejected
 - Increases memory usage by ~5MB per active archive inspection
@@ -153,6 +158,7 @@ Use the same format as commit messages:
 ```
 
 Examples:
+
 - `feat: add ZIP archive entry inspection`
 - `fix: prevent extraction outside destination directory`
 - `test: add high-expansion archive fixtures`
@@ -226,12 +232,14 @@ Convert to ready-for-review only when:
 When making changes after review:
 
 **Option 1: New commits** (preferred during review)
+
 ```bash
 git commit -m "fix: address review feedback on path validation"
 git push
 ```
 
 **Option 2: Amend** (only if very small and recent)
+
 ```bash
 git commit --amend
 git push --force-with-lease

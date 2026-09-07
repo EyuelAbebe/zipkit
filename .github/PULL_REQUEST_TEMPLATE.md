@@ -34,6 +34,7 @@
 <!-- List exactly what was tested. Include commands run. -->
 
 **Local checks:**
+
 ```bash
 npm run format
 npm run lint

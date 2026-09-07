@@ -231,11 +231,13 @@ const PATH_TRAVERSAL_ENTRIES = ['../../etc/passwd', 'C:\\Windows\\System32\\evil
 ### Avoid Magic Values
 
 ❌ Bad:
+
 ```typescript
 expect(expansion).toBeGreaterThan(10000);
 ```
 
 ✅ Good:
+
 ```typescript
 const EXPANSION_RATIO_THRESHOLD = 10000;
 expect(expansion).toBeGreaterThan(EXPANSION_RATIO_THRESHOLD);
@@ -246,6 +248,7 @@ expect(expansion).toBeGreaterThan(EXPANSION_RATIO_THRESHOLD);
 Always handle promises properly:
 
 ✅ Good:
+
 ```typescript
 it('should extract archive', async () => {
   await adapter.extract('/dest');
@@ -254,6 +257,7 @@ it('should extract archive', async () => {
 ```
 
 ❌ Bad:
+
 ```typescript
 it('should extract archive', () => {
   adapter.extract('/dest'); // Promise not awaited!
@@ -279,6 +283,7 @@ afterEach(async () => {
 If a test must be skipped:
 
 1. Use `.skip` with clear reason:
+
    ```typescript
    it.skip('should handle ZIP64 archives', () => {
      // TODO: Implement ZIP64 support (issue #89)
@@ -364,6 +369,7 @@ If a test is flaky:
 For complex APIs, consider documentation examples that double as tests.
 
 Example:
+
 ```typescript
 /**
  * @example

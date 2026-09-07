@@ -9,6 +9,7 @@ This document provides a comprehensive threat analysis for ZipKit, identifying p
 ### In Scope
 
 Security considerations within ZipKit's control:
+
 - Archive parsing and analysis
 - Path validation and traversal prevention
 - Resource exhaustion detection
@@ -19,6 +20,7 @@ Security considerations within ZipKit's control:
 ### Out of Scope
 
 Security considerations outside ZipKit's control:
+
 - Malware detection and antivirus functionality
 - Post-extraction file execution
 - User decision-making
@@ -31,18 +33,21 @@ Security considerations outside ZipKit's control:
 ### 1. Malicious Archive Creator
 
 **Profile**
+
 - Skill Level: Varies from script kiddie to advanced
 - Access: Can create archives, cannot modify ZipKit
 - Goal: Execute malicious code or exfiltrate data on victim machine
 - Resources: Archive creation tools, publicly available exploits
 
 **Capabilities**
+
 - Create specially crafted archives
 - Distribute archives through various channels
 - Use social engineering to convince users to open archives
 - Combine multiple attack techniques
 
 **Limitations**
+
 - Cannot modify ZipKit code
 - Cannot bypass user warnings without user action
 - Cannot force automatic extraction
@@ -51,32 +56,38 @@ Security considerations outside ZipKit's control:
 ### 2. Compromised Archive Source
 
 **Profile**
+
 - Legitimate source that has been compromised
 - User may trust the source
 - Archives may appear legitimate
 
 **Capabilities**
+
 - Distribute malicious archives through trusted channels
 - Leverage user trust in the source
 - Bypass user suspicion
 
 **Limitations**
+
 - Same technical limitations as malicious creators
 - Detection mechanisms still apply
 
 ### 3. Insider Threat
 
 **Profile**
+
 - User with legitimate access to system
 - May be malicious or negligent
 - Has ability to override warnings
 
 **Capabilities**
+
 - Intentionally extract dangerous archives
 - Ignore security warnings
 - Execute extracted content
 
 **Limitations**
+
 - Cannot bypass security detection
 - Actions are logged (in principle)
 - Limited to their system access
@@ -88,6 +99,7 @@ Security considerations outside ZipKit's control:
 **Description**: Archive contains files with paths designed to escape the extraction directory.
 
 **Attack Vector**
+
 ```
 archive.zip
 ├── ../../../etc/passwd
@@ -96,11 +108,13 @@ archive.zip
 ```
 
 **Attacker Goal**
+
 - Overwrite system files
 - Write to sensitive directories
 - Gain elevated access through file replacement
 
 **Impact**
+
 - **Severity**: Critical
 - **Confidentiality**: High - Can overwrite sensitive files
 - **Integrity**: Critical - Can modify system files
@@ -127,6 +141,7 @@ archive.zip
 **Residual Risk**: Low - Multiple layers of protection, clear warnings
 
 **Test Cases**
+
 - Unix path traversal: `../../etc/passwd`
 - Windows path traversal: `..\..\..\Windows\System32`
 - Absolute paths: `/etc/shadow`
@@ -138,6 +153,7 @@ archive.zip
 **Description**: Archive with extreme compression ratio designed to exhaust disk space or memory.
 
 **Attack Vector**
+
 ```
 bomb.zip (42 KB)
 └── Expands to multiple gigabytes or terabytes
@@ -145,11 +161,13 @@ bomb.zip (42 KB)
 ```
 
 **Attacker Goal**
+
 - Fill disk space
 - Crash system or application
 - Denial of service
 
 **Impact**
+
 - **Severity**: High
 - **Confidentiality**: None
 - **Integrity**: Low - May corrupt due to disk full
@@ -176,6 +194,7 @@ bomb.zip (42 KB)
 **Residual Risk**: Medium - User may not understand implications of large extractions
 
 **Test Cases**
+
 - 100:1 compression ratio
 - 1000:1 compression ratio
 - Nested archives (zip in zip)
@@ -186,6 +205,7 @@ bomb.zip (42 KB)
 **Description**: Archive contains executable files or scripts that could harm the system if run.
 
 **Attack Vector**
+
 ```
 documents.zip
 ├── report.pdf (legitimate)
@@ -194,11 +214,13 @@ documents.zip
 ```
 
 **Attacker Goal**
+
 - Trick user into executing malware
 - Social engineering combined with extraction
 - Blend malicious content with legitimate files
 
 **Impact**
+
 - **Severity**: High (if executed)
 - **Confidentiality**: High - Can steal data
 - **Integrity**: High - Can modify system
@@ -227,6 +249,7 @@ documents.zip
 **Honest Limitation**: ZipKit cannot prevent users from executing extracted files. We can only warn about their presence.
 
 **Test Cases**
+
 - Windows executables (`.exe`, `.dll`, `.bat`)
 - Unix executables (execute bit set)
 - Scripts (`.ps1`, `.sh`, `.py`)
@@ -237,6 +260,7 @@ documents.zip
 **Description**: Archive contains symbolic links pointing outside the extraction directory.
 
 **Attack Vector**
+
 ```
 archive.zip
 ├── link → /etc/passwd (symlink)
@@ -244,11 +268,13 @@ archive.zip
 ```
 
 **Attacker Goal**
+
 - Write files to arbitrary locations via symlink
 - Read sensitive files by creating links
 - Bypass path traversal detection through indirection
 
 **Impact**
+
 - **Severity**: High
 - **Confidentiality**: High - Can read sensitive files
 - **Integrity**: High - Can write to arbitrary locations
@@ -276,6 +302,7 @@ archive.zip
 **Residual Risk**: Medium - Platform and extraction tool dependent
 
 **Test Cases**
+
 - Symlink to absolute path: `/etc/passwd`
 - Symlink to relative escape: `../../../../etc/passwd`
 - Symlink to internal path: `../other_file.txt` (stays in archive)
@@ -286,6 +313,7 @@ archive.zip
 **Description**: Archives within archives, each compressed, leading to exponential expansion.
 
 **Attack Vector**
+
 ```
 level1.zip (1 KB)
 └── level2.zip (1 MB when extracted)
@@ -294,11 +322,13 @@ level1.zip (1 KB)
 ```
 
 **Attacker Goal**
+
 - Bypass simple compression ratio checks
 - Achieve massive expansion through multiple layers
 - Resource exhaustion
 
 **Impact**
+
 - **Severity**: High
 - **Confidentiality**: None
 - **Integrity**: Low
@@ -324,6 +354,7 @@ level1.zip (1 KB)
 **Residual Risk**: Medium - User may manually extract multiple levels
 
 **Test Cases**
+
 - Single nested archive
 - Multiple levels (3+)
 - Different archive formats nested
@@ -334,6 +365,7 @@ level1.zip (1 KB)
 **Description**: Multiple entries with same path, exploiting extraction order.
 
 **Attack Vector**
+
 ```
 archive.zip
 ├── config.ini (entry 1: legitimate content)
@@ -341,12 +373,14 @@ archive.zip
 ```
 
 **Attacker Goal**
+
 - User reviews first entry (legitimate)
 - User extracts archive
 - Second entry overwrites first (malicious)
 - User trusts reviewed content
 
 **Impact**
+
 - **Severity**: Medium
 - **Confidentiality**: Low
 - **Integrity**: High - Silent overwrite
@@ -373,6 +407,7 @@ archive.zip
 **Residual Risk**: Medium - Users may not understand implication
 
 **Test Cases**
+
 - Exact duplicates: `file.txt` and `file.txt`
 - Case variants: `File.txt` and `file.txt`
 - Directory vs file: `data/` and `data`
@@ -382,18 +417,21 @@ archive.zip
 **Description**: Extremely deep nested directories causing filesystem issues.
 
 **Attack Vector**
+
 ```
 archive.zip
 └── a/b/c/d/.../[1000 levels deep].../file.txt
 ```
 
 **Attacker Goal**
+
 - Exceed filesystem path limits
 - Cause extraction failures
 - Filesystem denial of service
 - Difficult to delete or manage
 
 **Impact**
+
 - **Severity**: Low to Medium
 - **Confidentiality**: None
 - **Integrity**: Low - May cause corruption
@@ -414,6 +452,7 @@ archive.zip
 **Residual Risk**: Low - Mostly usability issue, limited security impact
 
 **Test Cases**
+
 - 50 levels deep
 - 100 levels deep
 - Path length approaching OS limits
@@ -423,6 +462,7 @@ archive.zip
 ### NS1: Malware Detection
 
 **Why Not in Scope**
+
 - Requires signature databases
 - Needs constant updates
 - Heuristic analysis is complex
@@ -430,6 +470,7 @@ archive.zip
 - ZipKit is not a security product
 
 **Recommendation**
+
 - Users should use dedicated antivirus software
 - Scan extracted files before execution
 - Keep security software updated
@@ -437,12 +478,14 @@ archive.zip
 ### NS2: Content Validation
 
 **Why Not in Scope**
+
 - Cannot verify file integrity without checksums
 - Cannot validate file formats
 - Cannot detect sophisticated social engineering
 - Infinite variety of content types
 
 **Recommendation**
+
 - Verify archive sources
 - Check file hashes if provided
 - Use caution with unexpected file types
@@ -450,12 +493,14 @@ archive.zip
 ### NS3: Post-Extraction Activity
 
 **Why Not in Scope**
+
 - Cannot monitor what users do with extracted files
 - Cannot prevent file execution
 - Cannot control user decisions
 - OS-level controls outside extension scope
 
 **Recommendation**
+
 - User responsibility to avoid executing suspicious files
 - OS security features (Gatekeeper, UAC, etc.)
 - Practice safe computing habits
@@ -463,12 +508,14 @@ archive.zip
 ### NS4: Network-Based Attacks
 
 **Why Not in Scope**
+
 - ZipKit makes no network connections
 - No remote code execution vectors
 - No data transmission
 - Local-only operation
 
 **Recommendation**
+
 - Verify archive sources before downloading
 - Use secure channels for archive transfer
 - Check for tampering during download
@@ -476,11 +523,13 @@ archive.zip
 ### NS5: Extension Marketplace Compromise
 
 **Why Not in Scope**
+
 - Relies on VS Code marketplace security
 - Code signing by Microsoft
 - Outside ZipKit's control
 
 **Recommendation**
+
 - Install extensions from official marketplace
 - Verify publisher identity
 - Check extension reviews and ratings
@@ -574,6 +623,7 @@ Goal: Compromise User System via ZipKit
 **ZipKit is a developer productivity tool with security awareness, not a security product.**
 
 We detect common archive-based attacks and warn users, but we cannot:
+
 - Guarantee any archive is safe
 - Prevent determined users from extracting dangerous content
 - Detect sophisticated malware
@@ -581,6 +631,7 @@ We detect common archive-based attacks and warn users, but we cannot:
 - Control what happens after extraction
 
 **Users remain responsible for:**
+
 - Verifying archive sources
 - Making informed extraction decisions
 - Not executing suspicious content
@@ -636,6 +687,7 @@ If a security vulnerability is discovered:
 ## Conclusion
 
 ZipKit's threat model is based on realistic assessment of:
+
 - **What we can control**: Detection and warning
 - **What we cannot control**: User decisions and post-extraction behavior
 - **What's in scope**: Archive-based attacks

@@ -23,9 +23,7 @@ ZipKit is built as a Chrome Manifest V3 extension with a focus on minimal permis
   "version": "0.1.0",
   "description": "Zip. Unzip. Pack. Unpack. Inspect. Scan.",
 
-  "permissions": [
-    "storage"
-  ],
+  "permissions": ["storage"],
 
   "action": {
     "default_popup": "popup/popup.html",
@@ -51,9 +49,11 @@ ZipKit is built as a Chrome Manifest V3 extension with a focus on minimal permis
 ### Permissions Strategy
 
 **Requested Permissions:**
+
 - `storage` — Save user preferences locally
 
 **NOT Requested:**
+
 - No host permissions
 - No content script injection
 - No network access
@@ -61,6 +61,7 @@ ZipKit is built as a Chrome Manifest V3 extension with a focus on minimal permis
 - No downloads permission
 
 **File Access:**
+
 - Via File System Access API (user-initiated)
 - No permission required
 - User explicitly grants access per operation
@@ -100,6 +101,7 @@ ZipKit is built as a Chrome Manifest V3 extension with a focus on minimal permis
 ### Purpose
 
 Quick access to common actions:
+
 - Open workspace
 - Quick inspect
 - Quick extract
@@ -132,18 +134,22 @@ popup.html (Entry Point)
 ### Popup Actions
 
 **Open Workspace:**
+
 - `chrome.tabs.create({ url: 'workspace/index.html' })`
 - Pass context via URL params or storage
 
 **Quick Inspect:**
+
 - File picker → Open workspace with file
 - Workspace handles full inspection
 
 **Recent Archives:**
+
 - Read from `chrome.storage.local`
 - Click to reopen in workspace
 
 **Settings:**
+
 - Link to settings page or workspace settings tab
 
 ## Workspace Tab
@@ -151,6 +157,7 @@ popup.html (Entry Point)
 ### Purpose
 
 Full-featured application for:
+
 - Archive inspection
 - File browsing
 - Extraction with options
@@ -197,6 +204,7 @@ type Route =
 ```
 
 **Navigation:**
+
 - Hash-based routing (e.g., `#/inspect`)
 - State passed via React context
 - Browser back/forward support
@@ -232,6 +240,7 @@ interface WorkspaceState {
 ### Purpose
 
 Minimal background logic:
+
 - Handle extension installation
 - Initialize default settings
 - Coordinate workspace tabs (if needed)
@@ -261,6 +270,7 @@ chrome.runtime.onInstalled.addListener((details) => {
 ### MVP Service Worker
 
 For MVP, the service worker is minimal:
+
 - Set defaults on install
 - No active processing
 - Processing happens in workspace workers
@@ -376,6 +386,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
 ### chrome.storage.local
 
 **Stored Data:**
+
 - User preferences
 - Recent archives list (paths/names only, not handles)
 - Default extraction path (path only)
@@ -383,12 +394,14 @@ chrome.storage.onChanged.addListener((changes, area) => {
 - UI state preferences
 
 **Not Stored:**
+
 - File handles (can't be serialized)
 - Archive contents
 - Operation state
 - Temporary data
 
 **Limits:**
+
 - 10MB total storage (extension quota)
 - Sufficient for preferences
 - Clear old entries if needed
@@ -431,6 +444,7 @@ object-src 'none';
 ```
 
 **Implications:**
+
 - No inline scripts
 - No eval()
 - No external scripts
@@ -542,18 +556,22 @@ npm run build:dev
 ### Debugging
 
 **Popup:**
+
 - Right-click popup → Inspect
 - DevTools for popup context
 
 **Workspace:**
+
 - Standard DevTools (F12)
 - React DevTools extension
 
 **Service Worker:**
+
 - chrome://extensions/ → Inspect background page
 - Service Worker DevTools
 
 **Workers:**
+
 - Chrome DevTools → Sources → Threads
 - Console logs appear in worker context
 
@@ -579,10 +597,12 @@ npm run build:dev
 ### Update Mechanism
 
 **MVP:**
+
 - Manual updates (download new version)
 - No automatic updates
 
 **Chrome Web Store:**
+
 - Automatic updates via Chrome
 - Update check frequency controlled by Chrome
 - Silent updates (user doesn't need to act)

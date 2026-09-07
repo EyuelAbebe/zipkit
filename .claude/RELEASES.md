@@ -262,20 +262,24 @@ Triggered by:
 ## [0.1.0] - 2026-09-15
 
 ### Added
+
 - ZIP archive inspection and extraction
 - TAR archive support
 - Path traversal detection
 - Archive expansion risk analysis
 
 ### Fixed
+
 - Memory leak in large archive processing
 
 ### Security
+
 - Blocked extraction outside destination directory
 
 ## [0.0.1] - 2026-09-01
 
 ### Added
+
 - Initial repository setup
 - Core architecture documentation
 ```
