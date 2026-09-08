@@ -1,0 +1,24 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="128" height="128" rx="24" fill="#2563EB"/>
+
+  <!-- Zipper Design -->
+  <path d="M64 20 L64 108" stroke="white" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Zipper Teeth (Left) -->
+  <rect x="44" y="28" width="12" height="8" rx="2" fill="white"/>
+  <rect x="44" y="44" width="12" height="8" rx="2" fill="white"/>
+  <rect x="44" y="60" width="12" height="8" rx="2" fill="white"/>
+  <rect x="44" y="76" width="12" height="8" rx="2" fill="white"/>
+  <rect x="44" y="92" width="12" height="8" rx="2" fill="white"/>
+
+  <!-- Zipper Teeth (Right) -->
+  <rect x="72" y="28" width="12" height="8" rx="2" fill="white"/>
+  <rect x="72" y="44" width="12" height="8" rx="2" fill="white"/>
+  <rect x="72" y="60" width="12" height="8" rx="2" fill="white"/>
+  <rect x="72" y="76" width="12" height="8" rx="2" fill="white"/>
+  <rect x="72" y="92" width="12" height="8" rx="2" fill="white"/>
+
+  <!-- Zipper Pull -->
+  <circle cx="64" cy="48" r="8" fill="#FCD34D"/>
+</svg>

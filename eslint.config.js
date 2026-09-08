@@ -2,17 +2,19 @@ export default [
   {
     ignores: [
       'node_modules/**',
-      'dist/**',
-      'build/**',
+      '**/dist/**',
+      '**/build/**',
       'out/**',
       'coverage/**',
       '*.config.js',
       '**/*.d.ts',
+      '**/*.d.ts.map',
+      '**/*.js.map',
       'tsconfig.tsbuildinfo',
     ],
   },
   {
-    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+    files: ['**/*.js', '**/*.jsx'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
