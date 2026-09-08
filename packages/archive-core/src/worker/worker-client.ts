@@ -96,7 +96,7 @@ export class ArchiveWorkerClient {
       this.pendingRequests.set(id, {
         resolve: resolve as (result: unknown) => void,
         reject,
-        onProgress
+        onProgress,
       });
 
       if (transfer) {
@@ -129,11 +129,7 @@ export class ArchiveWorkerClient {
     data: Uint8Array,
     onProgress?: (processed: number, total: number) => void
   ): Promise<Uint8Array> {
-    return this.sendRequest<Uint8Array>(
-      { type: 'decompress', data },
-      [data.buffer],
-      onProgress
-    );
+    return this.sendRequest<Uint8Array>({ type: 'decompress', data }, [data.buffer], onProgress);
   }
 
   /**
@@ -142,10 +138,7 @@ export class ArchiveWorkerClient {
   async inspectZip(
     data: Uint8Array
   ): Promise<Array<{ path: string; size: number; isDirectory: boolean }>> {
-    return this.sendRequest(
-      { type: 'inspect-zip', data },
-      [data.buffer]
-    );
+    return this.sendRequest({ type: 'inspect-zip', data }, [data.buffer]);
   }
 
   /**

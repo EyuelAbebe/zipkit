@@ -1,0 +1,41 @@
+{
+  "name": "@zipkit/archive-security",
+  "version": "0.1.0",
+  "description": "Security scanning package for ZipKit - detects malicious archives, path traversal, and archive bombs",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "security",
+    "archive",
+    "scanner",
+    "path-traversal",
+    "zip-bomb",
+    "malware"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@zipkit/archive-core": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

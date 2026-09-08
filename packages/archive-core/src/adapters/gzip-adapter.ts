@@ -5,11 +5,7 @@ import type {
   ExtractOptions,
   ProgressEvent,
 } from '../types.js';
-import {
-  CorruptedArchiveError,
-  ExtractionError,
-  OperationCancelledError,
-} from '../types.js';
+import { CorruptedArchiveError, ExtractionError, OperationCancelledError } from '../types.js';
 import { TarAdapter } from './tar-adapter.js';
 
 /**
@@ -37,9 +33,7 @@ export class GzipAdapter implements ArchiveAdapter {
 
     try {
       const stream = this.file.stream();
-      const decompressedStream = stream.pipeThrough(
-        new DecompressionStream('gzip')
-      );
+      const decompressedStream = stream.pipeThrough(new DecompressionStream('gzip'));
 
       const reader = decompressedStream.getReader();
       const chunks: Uint8Array[] = [];
@@ -227,9 +221,7 @@ export async function compressGzip(data: Uint8Array): Promise<Uint8Array> {
     },
   });
 
-  const compressedStream = readableStream.pipeThrough(
-    new CompressionStream('gzip')
-  );
+  const compressedStream = readableStream.pipeThrough(new CompressionStream('gzip'));
 
   const reader = compressedStream.getReader();
   const chunks: Uint8Array[] = [];

@@ -45,14 +45,14 @@ self.addEventListener('message', async (event: MessageEvent<WorkerRequest>) => {
 
       default: {
         const exhaustive: never = message;
-        postError(`Unknown message type: ${(exhaustive as { type: string }).type}`, (exhaustive as { id: string }).id);
+        postError(
+          `Unknown message type: ${(exhaustive as { type: string }).type}`,
+          (exhaustive as { id: string }).id
+        );
       }
     }
   } catch (error) {
-    postError(
-      error instanceof Error ? error.message : 'Unknown error',
-      message.id
-    );
+    postError(error instanceof Error ? error.message : 'Unknown error', message.id);
   }
 });
 
