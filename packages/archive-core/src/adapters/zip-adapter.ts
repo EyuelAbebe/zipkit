@@ -6,11 +6,7 @@ import type {
   ExtractOptions,
   ProgressEvent,
 } from '../types.js';
-import {
-  CorruptedArchiveError,
-  ExtractionError,
-  OperationCancelledError,
-} from '../types.js';
+import { CorruptedArchiveError, ExtractionError, OperationCancelledError } from '../types.js';
 
 /**
  * ZIP archive adapter using fflate library.
@@ -267,10 +263,7 @@ export class ZipAdapter implements ArchiveAdapter {
   /**
    * Ensure a directory path exists in the destination.
    */
-  private async ensureDirectoryPath(
-    root: FileSystemDirectoryHandle,
-    path: string
-  ): Promise<void> {
+  private async ensureDirectoryPath(root: FileSystemDirectoryHandle, path: string): Promise<void> {
     const parts = path.split('/').filter((p) => p.length > 0);
     let current = root;
 

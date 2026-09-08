@@ -5,10 +5,7 @@ import type {
   ExtractOptions,
   ProgressEvent,
 } from '../types.js';
-import {
-  ExtractionError,
-  OperationCancelledError,
-} from '../types.js';
+import { ExtractionError, OperationCancelledError } from '../types.js';
 
 /**
  * TAR header structure (POSIX ustar format).
@@ -328,10 +325,7 @@ export class TarAdapter implements ArchiveAdapter {
   /**
    * Ensure a directory path exists in the destination.
    */
-  private async ensureDirectoryPath(
-    root: FileSystemDirectoryHandle,
-    path: string
-  ): Promise<void> {
+  private async ensureDirectoryPath(root: FileSystemDirectoryHandle, path: string): Promise<void> {
     const parts = path.split('/').filter((p) => p.length > 0);
     let current = root;
 

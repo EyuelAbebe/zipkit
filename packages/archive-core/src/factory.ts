@@ -59,18 +59,13 @@ async function detectFormat(file: File): Promise<'zip' | 'tar' | 'gzip' | 'tar.g
   if (name.endsWith('.tar.gz') || name.endsWith('.tgz')) return 'tar.gz';
   if (name.endsWith('.gz')) return 'gzip';
 
-  throw new UnsupportedFormatError(
-    `Unable to detect archive format for file: ${file.name}`
-  );
+  throw new UnsupportedFormatError(`Unable to detect archive format for file: ${file.name}`);
 }
 
 /**
  * Check if buffer matches a signature.
  */
-function matchesSignature(
-  buffer: Uint8Array,
-  signature: readonly number[] | string
-): boolean {
+function matchesSignature(buffer: Uint8Array, signature: readonly number[] | string): boolean {
   if (typeof signature === 'string') {
     const decoder = new TextDecoder('ascii');
     const str = decoder.decode(buffer);
