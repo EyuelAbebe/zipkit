@@ -1,0 +1,46 @@
+{
+  "name": "@zipkit/archive-core",
+  "version": "0.1.0",
+  "description": "Core archive processing package for ZipKit - supports ZIP, TAR, and GZIP formats",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./worker": {
+      "types": "./dist/worker/archive-worker.d.ts",
+      "import": "./dist/worker/archive-worker.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "zip",
+    "tar",
+    "gzip",
+    "archive",
+    "compression",
+    "browser",
+    "streaming"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "fflate": "^0.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
