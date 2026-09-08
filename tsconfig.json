@@ -20,13 +20,5 @@
     "composite": true,
     "incremental": true
   },
-  "exclude": [
-    "node_modules",
-    "**/dist",
-    "**/build",
-    "out",
-    "coverage",
-    "**/*.js",
-    "**/*.d.ts"
-  ]
+  "exclude": ["node_modules", "**/dist", "**/build", "out", "coverage", "**/*.js", "**/*.d.ts"]
 }
