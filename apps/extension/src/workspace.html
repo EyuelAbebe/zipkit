@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZipKit Workspace</title>
+    <link rel="stylesheet" href="workspace.css" />
+  </head>
+  <body>
+    <div class="workspace">
+      <header class="workspace-header">
+        <div class="header-content">
+          <h1>ZipKit</h1>
+          <nav class="workspace-nav">
+            <button id="nav-open" class="nav-button active">Open Archive</button>
+            <button id="nav-create" class="nav-button">Create Archive</button>
+          </nav>
+        </div>
+      </header>
+
+      <main class="workspace-main">
+        <!-- Open Archive View -->
+        <section id="open-view" class="view active">
+          <div class="empty-state" id="open-empty">
+            <svg
+              width="64"
+              height="64"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <path
+                d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"
+              />
+              <path d="M12 11v6" />
+              <path d="M9 14h6" />
+            </svg>
+            <h2>Open an Archive</h2>
+            <p>Select a ZIP, TAR, or TAR.GZ file to inspect and extract</p>
+            <button id="select-archive" class="primary-button">Select Archive</button>
+          </div>
+
+          <div class="content-view" id="open-content" style="display: none">
+            <div class="toolbar">
+              <div class="archive-info">
+                <h3 id="archive-name">Archive Name</h3>
+                <span id="archive-size" class="metadata">0 bytes</span>
+              </div>
+              <div class="toolbar-actions">
+                <button id="extract-selected" class="button" disabled>Extract Selected</button>
+                <button id="extract-all" class="button primary">Extract All</button>
+                <button id="close-archive" class="button secondary">Close</button>
+              </div>
+            </div>
+
+            <div class="security-panel" id="security-panel" style="display: none">
+              <div class="security-header">
+                <h4>Security Scan</h4>
+                <span id="security-badge" class="badge">Safe</span>
+              </div>
+              <div id="security-findings"></div>
+            </div>
+
+            <div class="file-tree-container">
+              <div id="file-tree" class="file-tree"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Create Archive View -->
+        <section id="create-view" class="view">
+          <div class="empty-state" id="create-empty">
+            <svg
+              width="64"
+              height="64"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <path d="M12 8v8" />
+              <path d="M8 12h8" />
+            </svg>
+            <h2>Create an Archive</h2>
+            <p>Select files or folders to pack into a new archive</p>
+            <div class="button-group">
+              <button id="select-files" class="primary-button">Select Files</button>
+              <button id="select-folder" class="secondary-button">Select Folder</button>
+            </div>
+          </div>
+
+          <div class="content-view" id="create-content" style="display: none">
+            <div class="toolbar">
+              <div class="archive-info">
+                <h3>New Archive</h3>
+                <span id="files-count" class="metadata">0 files selected</span>
+              </div>
+              <div class="toolbar-actions">
+                <button id="create-archive-btn" class="button primary">Create Archive</button>
+                <button id="clear-selection" class="button secondary">Clear</button>
+              </div>
+            </div>
+
+            <div class="settings-panel">
+              <div class="setting-group">
+                <label for="format-select">Format</label>
+                <select id="format-select" class="select">
+                  <option value="zip" selected>ZIP</option>
+                  <option value="tar">TAR</option>
+                  <option value="tar.gz">TAR.GZ</option>
+                </select>
+              </div>
+
+              <div class="setting-group" id="compression-group">
+                <label for="compression-select">Compression</label>
+                <select id="compression-select" class="select">
+                  <option value="0">No compression (Store)</option>
+                  <option value="3">Fast</option>
+                  <option value="6" selected>Balanced</option>
+                  <option value="9">Best</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="file-list-container">
+              <div id="file-list" class="file-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Progress Overlay -->
+        <div id="progress-overlay" class="progress-overlay" style="display: none">
+          <div class="progress-content">
+            <h3 id="progress-title">Processing...</h3>
+            <div class="progress-bar">
+              <div id="progress-bar-fill" class="progress-bar-fill"></div>
+            </div>
+            <p id="progress-text" class="progress-text">0%</p>
+            <button id="cancel-operation" class="button secondary">Cancel</button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="workspace.js" type="module"></script>
+  </body>
+</html>
