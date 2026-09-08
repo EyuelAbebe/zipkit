@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 
 import { execSync } from 'child_process';
-import { mkdirSync, copyFileSync, writeFileSync } from 'fs';
+import { mkdirSync, copyFileSync, writeFileSync, readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -20,12 +20,40 @@ try {
 mkdirSync(distDir, { recursive: true });
 mkdirSync(join(distDir, 'icons'), { recursive: true });
 
-// Compile TypeScript
-console.log('Compiling TypeScript...');
+// Compile TypeScript and bundle with esbuild
+console.log('Building workspace.js with esbuild...');
 try {
-  execSync('npx tsc', { cwd: __dirname, stdio: 'inherit' });
-} catch {
-  console.error('TypeScript compilation failed');
+  execSync(
+    `npx esbuild src/workspace.ts --bundle --outfile=dist/workspace.js --platform=browser --format=esm --target=es2020 --sourcemap`,
+    { cwd: __dirname, stdio: 'inherit' }
+  );
+  console.log('✓ workspace.js built successfully');
+} catch (error) {
+  console.error('Failed to build workspace.js:', error);
+  process.exit(1);
+}
+
+console.log('Building background.js with esbuild...');
+try {
+  execSync(
+    `npx esbuild src/background.ts --bundle --outfile=dist/background.js --platform=browser --format=esm --target=es2020 --sourcemap`,
+    { cwd: __dirname, stdio: 'inherit' }
+  );
+  console.log('✓ background.js built successfully');
+} catch (error) {
+  console.error('Failed to build background.js:', error);
+  process.exit(1);
+}
+
+console.log('Building popup.js with esbuild...');
+try {
+  execSync(
+    `npx esbuild src/popup.ts --bundle --outfile=dist/popup.js --platform=browser --format=esm --target=es2020 --sourcemap`,
+    { cwd: __dirname, stdio: 'inherit' }
+  );
+  console.log('✓ popup.js built successfully');
+} catch (error) {
+  console.error('Failed to build popup.js:', error);
   process.exit(1);
 }
 
@@ -43,10 +71,19 @@ console.log('Copying CSS files...');
 copyFileSync(join(__dirname, 'src', 'popup.css'), join(distDir, 'popup.css'));
 copyFileSync(join(__dirname, 'src', 'workspace.css'), join(distDir, 'workspace.css'));
 
+// Copy UI component styles
+console.log('Copying UI component styles...');
+const uiStylesPath = join(__dirname, '..', '..', 'packages', 'ui', 'src', 'styles', 'components.css');
+try {
+  const uiStyles = readFileSync(uiStylesPath, 'utf8');
+  writeFileSync(join(distDir, 'components.css'), uiStyles);
+  console.log('✓ UI component styles copied');
+} catch (error) {
+  console.warn('Warning: Could not copy UI component styles:', error.message);
+}
+
 // Generate PNG icons from SVG
 console.log('Generating icon files...');
-// const svgContent = readFileSync(join(__dirname, 'icons', 'icon.svg'), 'utf8');
-
 // For now, just copy the SVG as a placeholder
 // In a real build, you'd use a tool like sharp or canvas to convert SVG to PNG
 const sizes = [16, 32, 48, 128];

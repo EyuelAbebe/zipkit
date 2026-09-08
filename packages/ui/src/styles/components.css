@@ -1,0 +1,401 @@
+/**
+ * UI Components Styles
+ * Modern, clean design with proper theming
+ */
+
+:root {
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-secondary: #64748b;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-critical: #dc2626;
+
+  --color-safe: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+
+  --color-background: #ffffff;
+  --color-surface: #f9fafb;
+  --color-border: #e5e7eb;
+  --color-text: #1f2937;
+  --color-text-secondary: #6b7280;
+
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --border-radius: 6px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+}
+
+/* File Tree Component */
+.file-tree {
+  font-family: var(--font-family);
+  font-size: 14px;
+}
+
+.tree-level {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tree-node {
+  margin: 0;
+}
+
+.tree-node.collapsed > .tree-level {
+  display: none;
+}
+
+.node-content {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.node-content:hover {
+  background-color: var(--color-surface);
+}
+
+.node-checkbox {
+  margin-right: var(--spacing-sm);
+  cursor: pointer;
+}
+
+.node-icon {
+  margin-right: var(--spacing-sm);
+  font-size: 16px;
+}
+
+.node-name {
+  flex: 1;
+  color: var(--color-text);
+}
+
+.node-size {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  margin-left: var(--spacing-md);
+}
+
+/* Progress Bar Component */
+.progress-bar-container {
+  margin: var(--spacing-lg) 0;
+}
+
+.progress-filename {
+  font-size: 14px;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-sm);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 24px;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--color-primary);
+  transition: width 0.3s ease;
+  border-radius: var(--border-radius);
+}
+
+.progress-fill.animated {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 40px 40px;
+  animation: progress-animation 1s linear infinite;
+}
+
+@keyframes progress-animation {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 40px;
+  }
+}
+
+.progress-fill.complete {
+  background-color: var(--color-success);
+}
+
+.progress-fill.error {
+  background-color: var(--color-danger);
+}
+
+.progress-percentage {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-sm);
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Security Badge Component */
+.security-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  font-weight: 500;
+  gap: var(--spacing-sm);
+}
+
+.security-badge.risk-safe {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid var(--color-safe);
+}
+
+.security-badge.risk-warning {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid var(--color-warning);
+}
+
+.security-badge.risk-danger {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid var(--color-danger);
+}
+
+.badge-icon {
+  font-size: 16px;
+}
+
+.badge-label {
+  font-weight: 600;
+}
+
+/* Alert Box Component */
+.alert-box {
+  margin: var(--spacing-lg) 0;
+}
+
+.alert {
+  margin-bottom: var(--spacing-md);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  border-left: 4px solid;
+}
+
+.alert-danger {
+  background-color: #fee2e2;
+  border-left-color: var(--color-danger);
+}
+
+.alert-warning {
+  background-color: #fef3c7;
+  border-left-color: var(--color-warning);
+}
+
+.alert-safe {
+  background-color: #d1fae5;
+  border-left-color: var(--color-safe);
+}
+
+.alert-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.alert-icon {
+  font-size: 18px;
+}
+
+.alert-title {
+  font-size: 14px;
+}
+
+.alert-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.alert-item {
+  padding: var(--spacing-sm) 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.alert-item:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.alert-item-title {
+  font-size: 14px;
+  color: var(--color-text);
+  font-weight: 500;
+  margin-bottom: var(--spacing-xs);
+}
+
+.alert-item-details {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.alert-item-files {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  font-family: monospace;
+}
+
+/* Button Component */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: all 0.15s;
+  outline: none;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.button-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+}
+
+.button-secondary {
+  background-color: var(--color-secondary);
+  color: white;
+}
+
+.button-secondary:hover:not(:disabled) {
+  background-color: #475569;
+}
+
+.button-danger {
+  background-color: var(--color-danger);
+  color: white;
+}
+
+.button-danger:hover:not(:disabled) {
+  background-color: #dc2626;
+}
+
+.button.loading {
+  position: relative;
+}
+
+/* File List Component */
+.file-list {
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.file-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.15s;
+}
+
+.file-list-item:last-child {
+  border-bottom: none;
+}
+
+.file-list-item:hover {
+  background-color: var(--color-surface);
+}
+
+.file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.file-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-size {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-xs);
+}
+
+.file-remove-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.15s;
+  line-height: 1;
+  margin-left: var(--spacing-md);
+}
+
+.file-remove-btn:hover {
+  background-color: var(--color-danger);
+  color: white;
+}
+
+/* Empty State */
+.empty-state {
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}

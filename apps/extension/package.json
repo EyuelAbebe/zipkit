@@ -8,6 +8,11 @@
     "build": "node build.js",
     "clean": "rm -rf dist"
   },
+  "dependencies": {
+    "@zipkit/archive-core": "workspace:*",
+    "@zipkit/archive-security": "workspace:*",
+    "@zipkit/ui": "workspace:*"
+  },
   "devDependencies": {
     "typescript": "^5.0.0"
   }
