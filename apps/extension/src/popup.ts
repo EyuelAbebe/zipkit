@@ -712,14 +712,22 @@ function startArchiveCreation(): void {
   if (selectedFiles.length === 0) return;
 
   const formatSelect = document.getElementById('create-format-select') as HTMLSelectElement;
+  const compressionSelect = document.getElementById('create-compression-select') as HTMLSelectElement;
   const format = formatSelect.value;
+  const compression = compressionSelect.value;
+
+  // Build final extension
+  let extension = format;
+  if (compression === 'gzip') {
+    extension = format === 'tar' ? 'tar.gz' : `${format}.gz`;
+  }
 
   // Update progress screen for creation
   const progressTitle = document.getElementById('progress-title')!;
   const progressFilename = document.getElementById('progress-filename')!;
 
   progressTitle.textContent = 'CREATING ARCHIVE';
-  progressFilename.textContent = `my-archive.${format}`;
+  progressFilename.textContent = `my-archive.${extension}`;
 
   navigateToScreen('progress');
 
@@ -745,9 +753,9 @@ function startArchiveCreation(): void {
 
         completeTitle.textContent = 'Archive Created';
         completeSummary.textContent = `${selectedFiles.length} files packaged • ${formatFileSize(totalSize)} total`;
-        destinationPath.textContent = `Downloads/my-archive.${format}`;
+        destinationPath.textContent = `Downloads/my-archive.${extension}`;
 
-        addToRecentArchives(`my-archive.${format}`, formatFileSize(totalSize));
+        addToRecentArchives(`my-archive.${extension}`, formatFileSize(totalSize));
 
         selectedFiles = [];
         showCreateEmptyState();

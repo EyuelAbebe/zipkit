@@ -287,14 +287,14 @@
           <p class="hint">Select files or folders to pack into an archive</p>
           <div class="file-select-buttons">
             <button id="select-files-btn" class="btn btn-primary btn-full">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
                 <polyline points="13 2 13 9 20 9"/>
               </svg>
               <span>Browse Files</span>
             </button>
             <button id="select-folder-btn" class="btn btn-outline btn-full">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"/>
               </svg>
               <span>Browse Folder</span>
@@ -309,12 +309,20 @@
           </div>
 
           <div class="format-selector">
-            <label>Archive Format</label>
-            <select id="create-format-select" class="select-input">
-              <option value="zip">ZIP</option>
-              <option value="tar.gz">TAR.GZ</option>
-              <option value="tar">TAR</option>
-            </select>
+            <div class="format-group">
+              <label>Archive Format</label>
+              <select id="create-format-select" class="select-input">
+                <option value="zip">ZIP</option>
+                <option value="tar">TAR</option>
+              </select>
+            </div>
+            <div class="format-group">
+              <label>Compression</label>
+              <select id="create-compression-select" class="select-input">
+                <option value="none">None</option>
+                <option value="gzip">GZIP (.gz)</option>
+              </select>
+            </div>
           </div>
 
           <div class="files-list" id="create-files-list">
