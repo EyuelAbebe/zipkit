@@ -19,7 +19,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@zipkit/archive-core": "workspace:*",
-    "@zipkit/archive-security": "workspace:*"
+    "@zipkit/archive-core": "*",
+    "@zipkit/archive-security": "*"
   }
 }
