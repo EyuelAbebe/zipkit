@@ -178,6 +178,23 @@ body {
   gap: 6px;
 }
 
+.btn-full {
+  width: 100%;
+  flex: none;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #6366F1;
+  border: 2px solid #6366F1;
+}
+
+.btn-outline:hover {
+  background: #f5f3ff;
+  border-color: #4F46E5;
+  color: #4F46E5;
+}
+
 .recent-archives {
   padding: 0 20px 20px;
 }
