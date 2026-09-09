@@ -281,6 +281,22 @@ function setupCreateScreen(): void {
   createNowBtn.addEventListener('click', () => {
     startArchiveCreation();
   });
+
+  // Handle format selection changes to update compression options
+  const formatSelect = document.getElementById('create-format-select') as HTMLSelectElement;
+  const compressionSelect = document.getElementById('create-compression-select') as HTMLSelectElement;
+
+  formatSelect.addEventListener('change', () => {
+    const format = formatSelect.value;
+
+    // Disable compression for ZIP and 7z (they have built-in compression)
+    if (format === 'zip' || format === '7z') {
+      compressionSelect.disabled = true;
+      compressionSelect.value = 'none';
+    } else {
+      compressionSelect.disabled = false;
+    }
+  });
 }
 
 function setupCompleteScreen(): void {
@@ -731,10 +747,22 @@ function startArchiveCreation(): void {
   const format = formatSelect.value;
   const compression = compressionSelect.value;
 
-  // Build final extension
+  // Build final extension based on format and compression
   let extension = format;
-  if (compression === 'gzip') {
-    extension = format === 'tar' ? 'tar.gz' : `${format}.gz`;
+
+  if (compression !== 'none') {
+    if (format === 'tar') {
+      // TAR with compression: tar.gz, tar.bz2, tar.xz
+      const compressionExtMap: Record<string, string> = {
+        'gzip': 'tar.gz',
+        'bzip2': 'tar.bz2',
+        'xz': 'tar.xz'
+      };
+      extension = compressionExtMap[compression] || 'tar';
+    } else if (format === 'zip' || format === '7z') {
+      // ZIP and 7z have built-in compression, ignore separate compression
+      extension = format;
+    }
   }
 
   // Update progress screen for creation
