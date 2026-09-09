@@ -179,21 +179,25 @@
       </div>
 
       <div class="screen-content destination-content">
-        <div class="destination-info">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <div class="destination-info-header">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"/>
           </svg>
-          <h3>Select Destination Folder</h3>
-          <p class="hint">Chrome will open a folder picker to choose where files will be extracted</p>
+          <h3>Save Extracted Files</h3>
+          <p class="hint">Choose location and name for extracted files</p>
         </div>
 
-        <div id="selected-folder-display" class="selected-folder-display" style="display: none;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"/>
-          </svg>
-          <div class="folder-path-info">
-            <span class="folder-label">Destination:</span>
-            <span id="destination-input" class="folder-path"></span>
+        <div class="save-location-form">
+          <div class="form-group">
+            <label for="folder-name-input">Folder Name</label>
+            <input
+              type="text"
+              id="folder-name-input"
+              class="input-field"
+              placeholder="extracted-files"
+              value=""
+            />
+            <span class="input-hint">Files will be saved to: <strong>Downloads/<span id="folder-name-preview">extracted-files</span></strong></span>
           </div>
         </div>
       </div>
@@ -207,9 +211,9 @@
         </button>
         <button id="confirm-destination-btn" class="btn btn-primary">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"/>
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <span>Choose Folder & Extract</span>
+          <span>Extract Files</span>
         </button>
       </div>
     </div>

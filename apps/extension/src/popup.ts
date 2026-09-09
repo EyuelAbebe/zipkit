@@ -116,7 +116,19 @@ function setupDestinationScreen(): void {
   const backBtn = document.getElementById('back-from-destination')!;
   const cancelBtn = document.getElementById('cancel-destination-btn')!;
   const confirmBtn = document.getElementById('confirm-destination-btn')!;
-  const destinationInput = document.getElementById('destination-input') as HTMLSpanElement;
+  const folderNameInput = document.getElementById('folder-name-input') as HTMLInputElement;
+  const folderNamePreview = document.getElementById('folder-name-preview')!;
+
+  // Set default folder name from archive
+  const archiveName = currentArchive?.name?.replace(/\.(zip|tar|gz|7z|rar)$/i, '') || 'extracted-files';
+  folderNameInput.value = archiveName;
+  folderNamePreview.textContent = archiveName;
+
+  // Update preview as user types
+  folderNameInput.addEventListener('input', () => {
+    const value = folderNameInput.value.trim() || 'extracted-files';
+    folderNamePreview.textContent = value;
+  });
 
   backBtn.addEventListener('click', () => {
     navigateToScreen('extract');
@@ -127,19 +139,20 @@ function setupDestinationScreen(): void {
   });
 
   confirmBtn.addEventListener('click', async () => {
-    // Open Chrome's native directory picker when button is clicked
+    // Get folder name from input
+    const folderName = folderNameInput.value.trim() || 'extracted-files';
+
+    // Open Chrome's native directory picker
     try {
       const dirHandle = await (window as any).showDirectoryPicker({
         mode: 'readwrite',
         startIn: 'downloads'
       });
 
-      selectedDirectoryHandle = dirHandle;
+      // Create subfolder with the specified name
+      const subfolderHandle = await dirHandle.getDirectoryHandle(folderName, { create: true });
 
-      // Show selected folder
-      const folderDisplay = document.getElementById('selected-folder-display')!;
-      folderDisplay.style.display = 'flex';
-      destinationInput.textContent = dirHandle.name;
+      selectedDirectoryHandle = subfolderHandle;
 
       // Start extraction immediately
       await startExtractionWithHandle(selectedDirectoryHandle, true);

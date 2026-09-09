@@ -365,7 +365,15 @@ body {
 }
 
 .file-tree {
-  margin-top: 20px;
+  margin-top: 16px;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fafafa;
+  min-height: 200px;
 }
 
 .tree-item {
@@ -864,6 +872,74 @@ body {
   align-items: center;
   justify-content: center;
   padding: 48px 24px;
+}
+
+.destination-info-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.destination-info-header svg {
+  color: #6366F1;
+  margin-bottom: 16px;
+}
+
+.destination-info-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+.destination-info-header .hint {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.save-location-form {
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1e293b;
+  transition: all 0.2s;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #6366F1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.input-hint {
+  display: block;
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 6px;
+}
+
+.input-hint strong {
+  color: #6366F1;
 }
 
 .destination-info {
