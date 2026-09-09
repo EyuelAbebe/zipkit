@@ -3,7 +3,7 @@
   "name": "ZipKit",
   "version": "0.0.0",
   "description": "Zip. Unzip. Pack. Unpack. Inspect. Scan. A modern browser-based archive utility.",
-  "permissions": ["storage"],
+  "permissions": ["storage", "downloads"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

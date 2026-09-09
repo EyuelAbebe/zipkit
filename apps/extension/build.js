@@ -82,18 +82,27 @@ try {
   console.warn('Warning: Could not copy UI component styles:', error.message);
 }
 
-// Generate PNG icons from SVG
+// Generate icon files
 console.log('Generating icon files...');
-// For now, just copy the SVG as a placeholder
-// In a real build, you'd use a tool like sharp or canvas to convert SVG to PNG
+
+// Simple base64 encoded 1x1 PNG with blue color as placeholder
+// In production, use proper tools like sharp or @squoosh/lib to convert SVG to PNG
+const createSimpleIcon = (size) => {
+  // This creates a simple blue square PNG (base64 encoded)
+  // A minimal PNG file header + blue pixel data
+  const pngHeader =
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+  return Buffer.from(pngHeader, 'base64');
+};
+
 const sizes = [16, 32, 48, 128];
 sizes.forEach((size) => {
-  // Create a simple placeholder - in production, use proper SVG->PNG conversion
-  writeFileSync(
-    join(distDir, 'icons', `icon-${size}.png`),
-    `Placeholder for ${size}x${size} icon - TODO: Convert SVG to PNG`
-  );
+  // For now, create a minimal placeholder PNG
+  // TODO: Use sharp or similar tool to properly convert icon.svg to PNG
+  writeFileSync(join(distDir, 'icons', `icon-${size}.png`), createSimpleIcon(size));
 });
+
+console.log('✓ Icons generated (using placeholder - install sharp for proper icons)');
 
 console.log('✓ Build complete! Extension is ready in ./dist');
 console.log('');

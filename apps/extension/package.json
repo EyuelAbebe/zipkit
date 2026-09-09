@@ -9,9 +9,9 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@zipkit/archive-core": "workspace:*",
-    "@zipkit/archive-security": "workspace:*",
-    "@zipkit/ui": "workspace:*"
+    "@zipkit/archive-core": "*",
+    "@zipkit/archive-security": "*",
+    "@zipkit/ui": "*"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

@@ -7,53 +7,444 @@
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <div class="container">
-      <header>
-        <h1>ZipKit</h1>
-        <p class="tagline">Archive utility for the modern web</p>
-      </header>
+    <!-- Home Screen -->
+    <div id="screen-home" class="screen active">
+      <div class="header">
+        <div class="logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <!-- Zipper pull -->
+            <circle cx="12" cy="8" r="2.5" fill="#A91D3A" stroke="#8B1538" stroke-width="1"/>
 
-      <main>
-        <div class="actions">
-          <button id="open-archive" class="action-button primary">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"
-              />
-              <path d="M12 11v6" />
-              <path d="M9 14h6" />
-            </svg>
-            <span>Open Archive</span>
-          </button>
+            <!-- Left zipper teeth -->
+            <rect x="8" y="10" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="12" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="14" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="16" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="18" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
 
-          <button id="create-archive" class="action-button secondary">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <path d="M12 8v8" />
-              <path d="M8 12h8" />
-            </svg>
-            <span>Create Archive</span>
-          </button>
+            <!-- Right zipper teeth -->
+            <rect x="14" y="10" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="12" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="14" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="16" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="18" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+
+            <!-- Center zipper line -->
+            <line x1="12" y1="10" x2="12" y2="20" stroke="#C73659" stroke-width="1.5"/>
+          </svg>
+          <span class="logo-text"><span class="logo-zip">ZIP</span><span class="logo-kit">Kit</span></span>
         </div>
-      </main>
+        <button id="settings-btn" class="icon-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v6m0 6v6M1 12h6m6 0h6"/>
+          </svg>
+        </button>
+      </div>
 
-      <footer>
-        <p class="version">v0.0.0</p>
-      </footer>
+      <div class="drop-zone" id="drop-zone">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"/>
+          <path d="M12 11v6m-3-3h6"/>
+        </svg>
+        <h3>Drop files here or click to browse</h3>
+        <p class="hint">Supports ZIP, RAR, TAR.GZ, TAR, 7Z formats</p>
+      </div>
+
+      <div class="actions">
+        <button id="create-archive-btn" class="btn btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M12 8v8m-4-4h8"/>
+          </svg>
+          <span>Create Archive</span>
+        </button>
+        <button id="open-archive-btn" class="btn btn-secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"/>
+          </svg>
+          <span>Open Archive</span>
+        </button>
+      </div>
+
+      <div class="recent-archives">
+        <h4>RECENT ARCHIVES</h4>
+        <div id="recent-list" class="recent-list">
+          <!-- Recent archives will be populated here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Extract Screen -->
+    <div id="screen-extract" class="screen">
+      <div class="header">
+        <button id="back-from-extract" class="icon-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5m7 7l-7-7 7-7"/>
+          </svg>
+        </button>
+        <div class="logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <!-- Zipper pull -->
+            <circle cx="12" cy="8" r="2.5" fill="#A91D3A" stroke="#8B1538" stroke-width="1"/>
+
+            <!-- Left zipper teeth -->
+            <rect x="8" y="10" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="12" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="14" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="16" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="18" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+
+            <!-- Right zipper teeth -->
+            <rect x="14" y="10" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="12" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="14" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="16" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="18" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+
+            <!-- Center zipper line -->
+            <line x1="12" y1="10" x2="12" y2="20" stroke="#C73659" stroke-width="1.5"/>
+          </svg>
+          <span class="logo-text"><span class="logo-zip">ZIP</span><span class="logo-kit">Kit</span></span>
+        </div>
+        <button class="icon-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v6m0 6v6M1 12h6m6 0h6"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="screen-content">
+        <div class="file-info">
+          <h2 id="extract-filename">project-assets.zip</h2>
+          <p id="extract-filesize" class="meta">4.2 MB • Just now</p>
+        </div>
+
+        <div class="scan-status scanning" id="scan-status">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          <div>
+            <strong id="scan-title">Scanning Archive...</strong>
+            <p id="scan-description">Running security checks</p>
+            <div class="scan-checks" id="scan-checks">
+              <!-- Scan check items will appear here -->
+            </div>
+          </div>
+        </div>
+
+        <div class="file-tree" id="extract-file-tree">
+          <!-- File tree will be populated here -->
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <button id="extract-selected-btn" class="btn btn-secondary">Extract Selected (3)</button>
+        <button id="extract-all-btn" class="btn btn-primary">Extract All Files</button>
+      </div>
+    </div>
+
+    <!-- Destination Selection Screen -->
+    <div id="screen-destination" class="screen">
+      <div class="header">
+        <button id="back-from-destination" class="icon-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5m7 7l-7-7 7-7"/>
+          </svg>
+        </button>
+        <div class="logo">
+          <span class="logo-text">Select Destination</span>
+        </div>
+        <button class="icon-btn" style="visibility: hidden;"></button>
+      </div>
+
+      <div class="screen-content destination-content">
+        <div class="destination-info">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"/>
+          </svg>
+          <h3>Select Destination Folder</h3>
+          <p class="hint">Choose where to extract the archive files</p>
+        </div>
+
+        <div class="folder-selector">
+          <button id="browse-destination-btn" class="btn-folder-select">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"/>
+              <path d="M12 11v6m-3-3h6" stroke-width="1.5"/>
+            </svg>
+            <div class="folder-select-text">
+              <span class="main-text">Choose Folder Name</span>
+              <span class="sub-text">Click to specify extraction folder</span>
+            </div>
+          </button>
+
+          <div id="selected-folder-display" class="selected-folder" style="display: none;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+            <div class="folder-info">
+              <span class="folder-label">Selected Folder:</span>
+              <span id="destination-input" class="folder-name"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="destination-note">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <p>Files will be extracted to a folder in your Downloads directory. You can edit the folder name above.</p>
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <button id="cancel-destination-btn" class="btn btn-secondary">Cancel</button>
+        <button id="confirm-destination-btn" class="btn btn-primary">Extract Here</button>
+      </div>
+    </div>
+
+    <!-- Progress Screen -->
+    <div id="screen-progress" class="screen">
+      <div class="header">
+        <div class="logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <!-- Zipper pull -->
+            <circle cx="12" cy="8" r="2.5" fill="#A91D3A" stroke="#8B1538" stroke-width="1"/>
+
+            <!-- Left zipper teeth -->
+            <rect x="8" y="10" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="12" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="14" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="16" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="18" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+
+            <!-- Right zipper teeth -->
+            <rect x="14" y="10" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="12" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="14" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="16" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="18" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+
+            <!-- Center zipper line -->
+            <line x1="12" y1="10" x2="12" y2="20" stroke="#C73659" stroke-width="1.5"/>
+          </svg>
+          <span class="logo-text"><span class="logo-zip">ZIP</span><span class="logo-kit">Kit</span></span>
+        </div>
+      </div>
+
+      <div class="progress-container">
+        <h2 id="progress-title">EXTRACTING FILES</h2>
+        <p id="progress-filename">project-assets.zip</p>
+
+        <div class="progress-details">
+          <div class="progress-item">
+            <span id="current-file">Processing: src/index.tsx</span>
+            <span id="progress-percent" class="highlight">68%</span>
+          </div>
+        </div>
+
+        <div class="progress-bar">
+          <div id="progress-fill" class="progress-fill" style="width: 68%"></div>
+        </div>
+
+        <div class="extraction-queue">
+          <h4>EXTRACTED (5/8)</h4>
+          <div id="queue-list" class="queue-list">
+            <!-- Queue items will be populated here -->
+          </div>
+        </div>
+
+        <button id="cancel-btn" class="btn btn-secondary">Cancel Extraction</button>
+      </div>
+    </div>
+
+    <!-- Create Archive Screen -->
+    <div id="screen-create" class="screen">
+      <div class="header">
+        <button id="back-from-create" class="icon-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5m7 7l-7-7 7-7"/>
+          </svg>
+        </button>
+        <div class="logo">
+          <span class="logo-text">Create Archive</span>
+        </div>
+        <button class="icon-btn" style="visibility: hidden;"></button>
+      </div>
+
+      <div class="screen-content">
+        <div class="empty-state" id="create-empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M12 8v8m-4-4h8"/>
+          </svg>
+          <h3>Select Files to Archive</h3>
+          <p class="hint">Choose files or folders to pack into an archive</p>
+          <div class="file-select-buttons">
+            <button id="select-files-btn" class="btn btn-primary">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                <polyline points="13 2 13 9 20 9"/>
+              </svg>
+              <span>Select Files</span>
+            </button>
+            <button id="select-folder-btn" class="btn btn-secondary">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"/>
+              </svg>
+              <span>Select Folder</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="create-files-view" class="files-view" style="display: none;">
+          <div class="files-header">
+            <h3>Files to Package</h3>
+            <span id="files-count" class="meta">0 files selected</span>
+          </div>
+
+          <div class="format-selector">
+            <label>Archive Format</label>
+            <select id="create-format-select" class="select-input">
+              <option value="zip">ZIP</option>
+              <option value="tar.gz">TAR.GZ</option>
+              <option value="tar">TAR</option>
+            </select>
+          </div>
+
+          <div class="files-list" id="create-files-list">
+            <!-- Selected files will appear here -->
+          </div>
+
+          <div class="footer-actions">
+            <button id="add-more-btn" class="btn btn-secondary">+ Add More Files</button>
+            <button id="create-now-btn" class="btn btn-primary">Create Archive</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Complete Screen -->
+    <div id="screen-complete" class="screen">
+      <div class="header">
+        <div class="logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <!-- Zipper pull -->
+            <circle cx="12" cy="8" r="2.5" fill="#A91D3A" stroke="#8B1538" stroke-width="1"/>
+
+            <!-- Left zipper teeth -->
+            <rect x="8" y="10" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="12" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="14" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="16" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="8" y="18" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+
+            <!-- Right zipper teeth -->
+            <rect x="14" y="10" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="12" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="14" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="16" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+            <rect x="14" y="18" width="2" height="1.5" rx="0.3" fill="#8B1538"/>
+
+            <!-- Center zipper line -->
+            <line x1="12" y1="10" x2="12" y2="20" stroke="#C73659" stroke-width="1.5"/>
+          </svg>
+          <span class="logo-text"><span class="logo-zip">ZIP</span><span class="logo-kit">Kit</span></span>
+        </div>
+      </div>
+
+      <div class="complete-container">
+        <div class="success-icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
+        <h2 id="complete-title">Extraction Complete</h2>
+        <p id="complete-summary">52 files extracted • 4.2 MB total</p>
+
+        <div class="complete-details">
+          <div class="detail-row">
+            <span>DESTINATION</span>
+            <span id="destination-path">Downloads/project-assets</span>
+          </div>
+          <div class="detail-row">
+            <span>INTEGRITY</span>
+            <span class="status-ok">✓ Verified Safe</span>
+          </div>
+        </div>
+
+        <div class="footer-actions">
+          <button id="open-folder-btn" class="btn btn-primary">Open Folder</button>
+          <button id="done-btn" class="btn btn-secondary">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="screen-settings" class="screen">
+      <div class="header">
+        <button id="back-from-settings" class="icon-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5m7 7l-7-7 7-7"/>
+          </svg>
+        </button>
+        <div class="logo">
+          <span class="logo-text">ZipKit Settings</span>
+        </div>
+      </div>
+
+      <div class="settings-content">
+        <div class="setting-section">
+          <h3>DEFAULT FORMAT</h3>
+          <select id="format-setting" class="select-input">
+            <option value="zip">ZIP (Standard compatibility)</option>
+            <option value="tar">TAR</option>
+            <option value="tar.gz">TAR.GZ (Linux / Development)</option>
+          </select>
+        </div>
+
+        <div class="setting-section">
+          <h3>SECURITY CHECKLIST</h3>
+          <label class="checkbox-label">
+            <input type="checkbox" id="check-file-types" checked />
+            <span>File Types - No executable or embedded script found</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="check-nested" checked />
+            <span>Nested Archives - No recursively packed containers detected</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="check-path" checked />
+            <span>Path Traversal - Includes absolute or external directory references</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="check-file-sizes" checked />
+            <span>File Sizes - Compression ratios are within normal bounds</span>
+          </label>
+        </div>
+
+        <div class="setting-section">
+          <h3>AFTER EXTRACTION</h3>
+          <label class="checkbox-label">
+            <input type="checkbox" id="open-folder" checked />
+            <span>Open containing folder</span>
+          </label>
+          <label class="toggle-label">
+            <span>Scan archives before extracting</span>
+            <input type="checkbox" id="scan-before-extract" class="toggle" checked />
+          </label>
+        </div>
+      </div>
+
+      <div class="footer-info">
+        <p>ZipKit Version 1.2.0 • Powered by WebAssembly</p>
+      </div>
     </div>
 
     <script src="popup.js" type="module"></script>
