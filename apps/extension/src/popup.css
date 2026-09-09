@@ -61,7 +61,7 @@ body {
 }
 
 .logo-kit {
-  color: #8B1538;
+  color: #6366F1;
   font-weight: 700;
 }
 
@@ -101,7 +101,7 @@ body {
 }
 
 .drop-zone:hover, .drop-zone.drag-over {
-  border-color: #A91D3A;
+  border-color: #6366F1;
   background: #fef2f2;
 }
 
@@ -145,13 +145,13 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #8B1538 0%, #6D0F2A 100%);
+  background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
   color: #ffffff;
   box-shadow: 0 2px 8px rgba(139, 21, 56, 0.3);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #A91D3A 0%, #8B1538 100%);
+  background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
   box-shadow: 0 4px 12px rgba(169, 29, 58, 0.4);
   transform: translateY(-1px);
 }
@@ -250,7 +250,7 @@ body {
 }
 
 .scan-status.scanning svg {
-  color: #A91D3A;
+  color: #6366F1;
   animation: spin 1s linear infinite;
 }
 
@@ -299,7 +299,7 @@ body {
 }
 
 .scan-check-item.checking {
-  color: #A91D3A;
+  color: #6366F1;
 }
 
 .scan-check-item.complete {
@@ -406,7 +406,7 @@ body {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #8B1538 0%, #A91D3A 100%);
+  background: linear-gradient(90deg, #4F46E5 0%, #6366F1 100%);
   transition: width 0.3s ease;
 }
 
@@ -529,7 +529,7 @@ body {
 
 .select-input:focus {
   outline: none;
-  border-color: #A91D3A;
+  border-color: #6366F1;
   background: #ffffff;
 }
 
@@ -833,7 +833,7 @@ body {
 }
 
 .btn-folder-select:hover {
-  border-color: #A91D3A;
+  border-color: #6366F1;
   background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
   box-shadow: 0 4px 16px rgba(169, 29, 58, 0.15);
   transform: translateY(-2px);
@@ -848,7 +848,7 @@ body {
 }
 
 .btn-folder-select svg {
-  color: #A91D3A;
+  color: #6366F1;
   flex-shrink: 0;
 }
 
