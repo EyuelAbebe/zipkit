@@ -35,7 +35,10 @@
     "test:integration": "echo 'Integration tests not yet implemented' && exit 0",
     "test:e2e": "playwright test",
     "build": "npm run build --workspaces --if-present",
-    "clean": "rm -rf node_modules dist build out coverage .nyc_output"
+    "clean": "rm -rf node_modules dist build out coverage .nyc_output",
+    "release:verify": "scripts/release/verify.sh",
+    "release:rc": "scripts/release/create-rc.sh",
+    "release:promote": "scripts/release/promote.sh"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
