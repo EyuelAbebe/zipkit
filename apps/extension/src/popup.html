@@ -184,57 +184,33 @@
             <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"/>
           </svg>
           <h3>Select Destination Folder</h3>
-          <p class="hint">Choose where to extract the archive files</p>
+          <p class="hint">Chrome will open a folder picker to choose where files will be extracted</p>
         </div>
 
-        <div class="folder-selector">
-          <button id="browse-destination-btn" class="btn-folder-select">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"/>
-              <path d="M12 11v6m-3-3h6" stroke-width="1.5"/>
-            </svg>
-            <div class="folder-select-text">
-              <span class="main-text">Choose Folder Name</span>
-              <span class="sub-text">Click to specify extraction folder</span>
-            </div>
-          </button>
-
-          <div id="selected-folder-display" class="selected-folder" style="display: none;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 6L9 17l-5-5"/>
-            </svg>
-            <div class="folder-info">
-              <span class="folder-label">Selected Folder:</span>
-              <span id="destination-input" class="folder-name"></span>
-            </div>
-          </div>
-        </div>
-
-        <div class="extraction-options">
-          <h4>Extraction Options</h4>
-          <label class="option-item">
-            <input type="checkbox" id="open-after-extract" checked />
-            <span>Open folder after extraction</span>
-          </label>
-          <label class="option-item">
-            <input type="checkbox" id="create-subfolder" checked />
-            <span>Create subfolder for contents</span>
-          </label>
-        </div>
-
-        <div class="destination-note">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="16" x2="12" y2="12"/>
-            <line x1="12" y1="8" x2="12.01" y2="8"/>
+        <div id="selected-folder-display" class="selected-folder-display" style="display: none;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"/>
           </svg>
-          <p>Files will be saved to your Downloads folder. Click the folder name above to customize.</p>
+          <div class="folder-path-info">
+            <span class="folder-label">Destination:</span>
+            <span id="destination-input" class="folder-path"></span>
+          </div>
         </div>
       </div>
 
       <div class="footer-actions">
-        <button id="cancel-destination-btn" class="btn btn-secondary">Cancel</button>
-        <button id="confirm-destination-btn" class="btn btn-primary">Extract Here</button>
+        <button id="cancel-destination-btn" class="btn btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5m7 7l-7-7 7-7"/>
+          </svg>
+          <span>Back</span>
+        </button>
+        <button id="confirm-destination-btn" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2z"/>
+          </svg>
+          <span>Choose Folder & Extract</span>
+        </button>
       </div>
     </div>
 

@@ -116,8 +116,7 @@ function setupDestinationScreen(): void {
   const backBtn = document.getElementById('back-from-destination')!;
   const cancelBtn = document.getElementById('cancel-destination-btn')!;
   const confirmBtn = document.getElementById('confirm-destination-btn')!;
-  const browseBtn = document.getElementById('browse-destination-btn')!;
-  const destinationInput = document.getElementById('destination-input') as HTMLInputElement;
+  const destinationInput = document.getElementById('destination-input') as HTMLSpanElement;
 
   backBtn.addEventListener('click', () => {
     navigateToScreen('extract');
@@ -128,23 +127,29 @@ function setupDestinationScreen(): void {
   });
 
   confirmBtn.addEventListener('click', async () => {
-    // Get extraction options
-    const openAfterExtract = (document.getElementById('open-after-extract') as HTMLInputElement)?.checked ?? true;
+    // Open Chrome's native directory picker when button is clicked
+    try {
+      const dirHandle = await (window as any).showDirectoryPicker({
+        mode: 'readwrite',
+        startIn: 'downloads'
+      });
 
-    if (selectedDirectoryHandle) {
-      await startExtractionWithHandle(selectedDirectoryHandle, openAfterExtract);
-    } else {
-      // Fallback if no folder selected
-      const destination = destinationInput.value.trim();
-      if (destination) {
-        startExtraction(destination, openAfterExtract);
+      selectedDirectoryHandle = dirHandle;
+
+      // Show selected folder
+      const folderDisplay = document.getElementById('selected-folder-display')!;
+      folderDisplay.style.display = 'flex';
+      destinationInput.textContent = dirHandle.name;
+
+      // Start extraction immediately
+      await startExtractionWithHandle(selectedDirectoryHandle, true);
+    } catch (error) {
+      if ((error as Error).name !== 'AbortError') {
+        console.error('Error selecting folder:', error);
+        alert('Failed to select destination folder. Please try again.');
       }
+      // User cancelled the picker, just return
     }
-  });
-
-  browseBtn.addEventListener('click', async () => {
-    const folderName = document.getElementById('destination-input')!;
-    await selectDestinationFolder(folderName as HTMLSpanElement);
   });
 }
 
