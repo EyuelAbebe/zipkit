@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Generate ZipKit Icons</title>
+  <style>
+    body { font-family: system-ui; padding: 20px; }
+    canvas { border: 1px solid #ccc; margin: 10px; }
+    .icon-group { margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <h1>ZipKit Icon Generator</h1>
+  <p>Right-click each canvas and "Save image as..." to download the PNG icons.</p>
+
+  <div class="icon-group">
+    <h2>16x16</h2>
+    <canvas id="icon16" width="16" height="16"></canvas>
+  </div>
+
+  <div class="icon-group">
+    <h2>32x32</h2>
+    <canvas id="icon32" width="32" height="32"></canvas>
+  </div>
+
+  <div class="icon-group">
+    <h2>48x48</h2>
+    <canvas id="icon48" width="48" height="48"></canvas>
+  </div>
+
+  <div class="icon-group">
+    <h2>128x128</h2>
+    <canvas id="icon128" width="128" height="128"></canvas>
+  </div>
+
+  <script>
+    function drawIcon(canvas) {
+      const ctx = canvas.getContext('2d');
+      const size = canvas.width;
+      const scale = size / 128;
+
+      ctx.save();
+      ctx.scale(scale, scale);
+
+      // Background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 128, 128);
+
+      // Zipper pull
+      ctx.fillStyle = '#6366F1';
+      ctx.beginPath();
+      ctx.arc(64, 24, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#4F46E5';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      // Left zipper teeth
+      ctx.fillStyle = '#4F46E5';
+      roundRect(ctx, 40, 40, 12, 8, 2); ctx.fill();
+      roundRect(ctx, 40, 52, 12, 8, 2); ctx.fill();
+      roundRect(ctx, 40, 64, 12, 8, 2); ctx.fill();
+      roundRect(ctx, 40, 76, 12, 8, 2); ctx.fill();
+      roundRect(ctx, 40, 88, 12, 8, 2); ctx.fill();
+      roundRect(ctx, 40, 100, 12, 8, 2); ctx.fill();
+
+      // Right zipper teeth
+      roundRect(ctx, 76, 40, 12, 8, 2); ctx.fill();
+      roundRect(ctx, 76, 52, 12, 8, 2); ctx.fill();
+      roundRect(ctx, 76, 64, 12, 8, 2); ctx.fill();
+      roundRect(ctx, 76, 76, 12, 8, 2); ctx.fill();
+      roundRect(ctx, 76, 88, 12, 8, 2); ctx.fill();
+      roundRect(ctx, 76, 100, 12, 8, 2); ctx.fill();
+
+      // Center zipper line
+      ctx.strokeStyle = '#818CF8';
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(64, 38);
+      ctx.lineTo(64, 110);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function roundRect(ctx, x, y, width, height, radius) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    }
+
+    // Draw all icons
+    drawIcon(document.getElementById('icon16'));
+    drawIcon(document.getElementById('icon32'));
+    drawIcon(document.getElementById('icon48'));
+    drawIcon(document.getElementById('icon128'));
+  </script>
+</body>
+</html>

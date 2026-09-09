@@ -1,0 +1,26 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="128" height="128" fill="#ffffff"/>
+
+  <!-- Zipper pull -->
+  <circle cx="64" cy="24" r="12" fill="#A91D3A" stroke="#8B1538" stroke-width="4"/>
+
+  <!-- Left zipper teeth -->
+  <rect x="40" y="40" width="12" height="8" rx="2" fill="#8B1538"/>
+  <rect x="40" y="52" width="12" height="8" rx="2" fill="#8B1538"/>
+  <rect x="40" y="64" width="12" height="8" rx="2" fill="#8B1538"/>
+  <rect x="40" y="76" width="12" height="8" rx="2" fill="#8B1538"/>
+  <rect x="40" y="88" width="12" height="8" rx="2" fill="#8B1538"/>
+  <rect x="40" y="100" width="12" height="8" rx="2" fill="#8B1538"/>
+
+  <!-- Right zipper teeth -->
+  <rect x="76" y="40" width="12" height="8" rx="2" fill="#8B1538"/>
+  <rect x="76" y="52" width="12" height="8" rx="2" fill="#8B1538"/>
+  <rect x="76" y="64" width="12" height="8" rx="2" fill="#8B1538"/>
+  <rect x="76" y="76" width="12" height="8" rx="2" fill="#8B1538"/>
+  <rect x="76" y="88" width="12" height="8" rx="2" fill="#8B1538"/>
+  <rect x="76" y="100" width="12" height="8" rx="2" fill="#8B1538"/>
+
+  <!-- Center zipper line -->
+  <line x1="64" y1="38" x2="64" y2="110" stroke="#C73659" stroke-width="6" stroke-linecap="round"/>
+</svg>
