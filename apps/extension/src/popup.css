@@ -40,10 +40,12 @@ body {
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 18px;
+  justify-content: center;
+  gap: 12px;
+  font-size: 22px;
   font-weight: 700;
   color: #ffffff;
+  flex: 1;
 }
 
 .logo svg {
@@ -52,17 +54,17 @@ body {
 
 .logo-text {
   font-weight: 700;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.8px;
 }
 
 .logo-zip {
   color: #1e293b;
-  font-weight: 800;
+  font-weight: 300;
 }
 
 .logo-kit {
   color: #6366F1;
-  font-weight: 700;
+  font-weight: 900;
 }
 
 .icon-btn {
