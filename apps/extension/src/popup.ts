@@ -128,13 +128,16 @@ function setupDestinationScreen(): void {
   });
 
   confirmBtn.addEventListener('click', async () => {
+    // Get extraction options
+    const openAfterExtract = (document.getElementById('open-after-extract') as HTMLInputElement)?.checked ?? true;
+
     if (selectedDirectoryHandle) {
-      await startExtractionWithHandle(selectedDirectoryHandle);
+      await startExtractionWithHandle(selectedDirectoryHandle, openAfterExtract);
     } else {
       // Fallback if no folder selected
       const destination = destinationInput.value.trim();
       if (destination) {
-        startExtraction(destination);
+        startExtraction(destination, openAfterExtract);
       }
     }
   });
@@ -198,7 +201,7 @@ async function selectDestinationFolder(destinationInput: HTMLInputElement | HTML
   }
 }
 
-async function startExtractionWithHandle(dirHandle: FileSystemDirectoryHandle): Promise<void> {
+async function startExtractionWithHandle(dirHandle: FileSystemDirectoryHandle, openAfterExtract: boolean = true): Promise<void> {
   navigateToScreen('progress');
 
   const progressTitle = document.getElementById('progress-title')!;
@@ -284,9 +287,21 @@ function setupCompleteScreen(): void {
   const openFolderBtn = document.getElementById('open-folder-btn')!;
   const doneBtn = document.getElementById('done-btn')!;
 
-  openFolderBtn.addEventListener('click', () => {
-    // Open the folder (browser limitation: can't actually do this)
-    alert('Files saved! Check your Downloads folder.');
+  openFolderBtn.addEventListener('click', async () => {
+    // Use Chrome downloads API to show downloaded files
+    try {
+      const downloads = await chrome.downloads.search({ limit: 1, orderBy: ['-startTime'] });
+      if (downloads.length > 0) {
+        // Show the downloaded file in the system file manager
+        chrome.downloads.show(downloads[0].id);
+      } else {
+        // Fallback: just inform user
+        alert('Files extracted! Check your Downloads folder.');
+      }
+    } catch (error) {
+      console.error('Error opening folder:', error);
+      alert('Files extracted! Check your Downloads folder.');
+    }
     navigateToScreen('home');
   });
 
@@ -468,7 +483,7 @@ function loadArchiveContents(file: File): void {
   `;
 }
 
-function startExtraction(destination: string): void {
+function startExtraction(destination: string, openAfterExtract: boolean = true): void {
   const progressTitle = document.getElementById('progress-title')!;
   const progressFilename = document.getElementById('progress-filename')!;
 
