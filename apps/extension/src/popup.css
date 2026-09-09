@@ -200,6 +200,32 @@ body {
   color: #4F46E5;
 }
 
+.btn-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  margin-top: 12px;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s;
+  border-radius: 4px;
+}
+
+.btn-text-link:hover {
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+.btn-text-link svg {
+  width: 16px;
+  height: 16px;
+}
+
 .recent-archives {
   padding: 0 20px 20px;
 }
