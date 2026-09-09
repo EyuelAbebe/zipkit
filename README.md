@@ -1,257 +1,265 @@
 # ZipKit
 
+<div align="center">
+
+![ZipKit Logo](screenshot/brand-identity-strip.png)
+
 **Zip. Unzip. Pack. Unpack. Inspect. Scan.**
 
-A modern Chrome extension for creating, inspecting, and extracting archive files with built-in safety analysis.
+A modern Chrome extension for creating, inspecting, and extracting archive files with built-in security scanning.
+
+[![CI/CD](https://img.shields.io/github/actions/workflow/status/eyuelabebe/zipkit/ci.yml?branch=main&label=CI%2FCD&logo=github)](https://github.com/eyuelabebe/zipkit/actions)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Chrome Extension](https://img.shields.io/badge/Chrome-Manifest%20V3-orange?logo=googlechrome)](https://developer.chrome.com/docs/extensions/mv3/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
+[Features](#features) • [Screenshots](#screenshots) • [Installation](#installation) • [Documentation](docs/) • [Contributing](CONTRIBUTING.md)
+
+</div>
 
 ---
 
 ## ⚠️ Project Status
 
-**ZipKit is currently in pre-MVP development.**
+**ZipKit is currently in active development.**
 
-The repository foundation, architecture, and development standards are established. Product implementation is in progress.
+Core functionality is implemented and the extension is ready for testing. Security scanning features are operational but should not be considered production-ready.
 
-**Do not use this extension for production purposes yet.**
-
----
-
-## What is ZipKit?
-
-ZipKit is a Chrome extension that provides local-first archive operations with integrated safety scanning:
-
-- **Create archives** — ZIP, TAR, TAR.GZ from your local files
-- **Extract archives** — Safely extract with path validation
-- **Inspect before extracting** — Browse archive contents, view metadata
-- **Safety scanning** — Detect path traversal, archive bombs, executables, and other risks
-- **Local-first** — All processing happens in your browser, no uploading required
-- **Cross-platform** — Works on Windows, macOS, Linux, and ChromeOS
-
-### What ZipKit Is NOT
-
-- ❌ Not an antivirus replacement
-- ❌ Not a cloud storage or file sharing service
-- ❌ Not guaranteed malware detection
-
-ZipKit provides **structural archive safety analysis**, not comprehensive malware scanning. Use it alongside your existing security tools.
+**Use at your own risk. This extension is not yet fully tested for production use.**
 
 ---
 
 ## Features
 
-### MVP Scope (In Development)
+### 🎯 Core Capabilities
 
-- ✅ ZIP support (create, extract, inspect)
-- ✅ TAR support (create, extract, inspect)
-- ✅ TAR.GZ / TGZ support (create, extract, inspect)
-- ✅ GZIP support (compress, decompress)
+<table>
+<tr>
+<td width="50%">
+
+#### Archive Creation
+- ✅ ZIP, TAR, TAR.GZ formats
+- ✅ Drag & drop file selection
+- ✅ Folder selection with subdirectories
+- ✅ Hierarchical folder structure display
+- ✅ Multiple compression levels
+- ✅ Real-time progress tracking
+
+</td>
+<td width="50%">
+
+#### Archive Extraction
+- ✅ Safe extraction with validation
+- ✅ Browse contents before extracting
+- ✅ Selective file extraction
+- ✅ Destination folder selection
+- ✅ File tree preview
+- ✅ Progress monitoring
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+#### Security Scanning
+- ✅ Real-time security analysis
 - ✅ Path traversal detection
-- ✅ Expansion ratio analysis (archive bomb detection)
-- ✅ Executable and script detection
+- ✅ Archive bomb detection
+- ✅ Executable file detection
 - ✅ Nested archive detection
-- ✅ Chrome extension popup and workspace
-- ✅ Progress reporting and cancellation
-- ✅ Selective extraction
+- ✅ Integrity verification
 
-### Future Considerations
+</td>
+<td width="50%">
 
-- RAR, 7z, XZ, Zstandard support
-- Password-protected archive decryption
+#### User Experience
+- ✅ Dark modern UI theme
+- ✅ Modal-based workflow
+- ✅ Recent archives history
+- ✅ Drag & drop support
+- ✅ Local-first (no cloud uploads)
+- ✅ Cross-platform compatibility
+
+</td>
+</tr>
+</table>
+
+### 🔜 Planned Features
+
+- RAR, 7z support
+- Password-protected archives
 - Chrome download integration
-- Advanced malware signature scanning (requires research)
+- Advanced security signatures
 
 ---
 
-## Architecture Highlights
+## Screenshots
 
-- **Manifest V3** Chrome extension
-- **Web Workers** for CPU-intensive operations
-- **Streaming architecture** for large files (multi-GB support)
-- **Minimal permissions** (storage only for MVP)
-- **TypeScript** strict mode
-- **Local-first** processing (no remote servers)
+<div align="center">
 
-See [docs/architecture/](docs/architecture/) for detailed architecture documentation.
+### Home & Archive Creation
+![Home Screen](screenshot/screens-row.png)
 
----
+### Extraction & Security Scanning
+![Additional Screens](screenshot/zipkit-additional-screens.png)
 
-## Development
-
-### Prerequisites
-
-- Node.js 18+
-- npm 9+
-- Chrome browser
-
-### Quick Start
-
-```bash
-# Clone repository
-git clone https://github.com/eyuelabebe/zipkit.git
-cd zipkit
-
-# Install dependencies
-npm install
-
-# Run quality checks
-npm run format
-npm run lint
-npm run typecheck
-npm run test
-npm run build
-```
-
-### Load Extension in Chrome
-
-1. Build the extension: `npm run build`
-2. Open Chrome and navigate to `chrome://extensions/`
-3. Enable "Developer mode"
-4. Click "Load unpacked"
-5. Select the `apps/extension/dist` directory
-
-See [docs/development/development-setup.md](docs/development/development-setup.md) for complete setup instructions.
+</div>
 
 ---
 
-## Documentation
+## Installation
 
-- **Product**: [docs/product/](docs/product/)
-- **Architecture**: [docs/architecture/](docs/architecture/)
-- **Security**: [docs/security/](docs/security/)
-- **Development**: [docs/development/](docs/development/)
-- **Testing**: [docs/testing/](docs/testing/)
-- **Release**: [docs/release/](docs/release/)
-- **Decisions (ADRs)**: [docs/decisions/](docs/decisions/)
+### For Users
+
+**Chrome Web Store** _(Coming Soon)_
 
 ### For Developers
 
-- [CONTRIBUTING.md](CONTRIBUTING.md) — Contribution guidelines
-- [SECURITY.md](SECURITY.md) — Security policy and vulnerability reporting
-- [.claude/](.claude/) — Agent operating handbook (required reading)
+```bash
+# Clone and install
+git clone https://github.com/eyuelabebe/zipkit.git
+cd zipkit
+npm install
+
+# Build extension
+npm run build
+
+# Load in Chrome
+# 1. Open chrome://extensions/
+# 2. Enable "Developer mode"
+# 3. Click "Load unpacked"
+# 4. Select apps/extension/dist
+```
+
+**Quick Commands:**
+```bash
+make dev          # Install and build
+make load         # Build and show load instructions
+make upload       # Package and show upload instructions
+```
+
+See [Development Setup Guide](docs/development/development-setup.md) for detailed instructions.
 
 ---
 
-## Contributing
+## Quick Start
 
-ZipKit follows issue-driven development. All significant work originates from GitHub issues.
+### Creating an Archive
 
-### Contribution Workflow
+1. Click the ZipKit icon in your browser toolbar
+2. Click **"Create Archive"** or drag & drop files
+3. Select files or choose a folder (includes subdirectories)
+4. Choose format (ZIP, TAR, TAR.GZ)
+5. Click **"Create Archive"** and save
 
-1. Find or create a GitHub issue
-2. Read linked documentation
-3. Create feature branch (`feature/<issue>-<description>`)
-4. Implement focused change
-5. Add tests
-6. Run quality checks
-7. Create pull request
-8. Respond to review feedback
-9. Merge via approved process
+### Extracting an Archive
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [.claude/WORKFLOW.md](.claude/WORKFLOW.md) for detailed guidelines.
-
-### Important Rules
-
-- Never work directly on `main`
-- Keep changes small and focused
-- Add tests for all behavioral changes
-- Update documentation when behavior changes
-- Follow Conventional Commits format
-- No AI attribution in repository metadata
-
----
-
-## Security
-
-Security is a core principle for ZipKit.
-
-### Reporting Vulnerabilities
-
-**Do not report security vulnerabilities in public issues.**
-
-See [SECURITY.md](SECURITY.md) for responsible disclosure process.
-
-### Security Model
-
-ZipKit provides **structural archive safety analysis**:
-
-- Path traversal detection
-- Expansion ratio analysis (archive bombs)
-- Executable file detection
-- Symlink/hardlink escape detection
-- Nested archive detection
-- Clear user warnings
-
-See [docs/security/security-model.md](docs/security/security-model.md) for complete security architecture.
-
----
-
-## Privacy
-
-**ZipKit is local-first.**
-
-- Archives are processed in your browser
-- No remote servers in MVP
-- No uploading of user data
-- No tracking or analytics
-
-Your archives are private.
+1. Click the ZipKit icon
+2. Drag & drop an archive or click **"Open Archive"**
+3. Wait for security scan to complete
+4. Review file contents in the tree view
+5. Choose extraction destination
+6. Click **"Extract All Files"** or select specific files
 
 ---
 
 ## Technology Stack
 
-- **Language**: TypeScript (strict mode)
-- **Runtime**: Chrome browser
-- **Extension**: Manifest V3
-- **Processing**: Web Workers
-- **Archive Libraries**: TBD (evaluation in Phase 0B)
-- **Testing**: Playwright for E2E
-- **Build**: TBD (evaluation in Phase 0A)
+- **Language:** TypeScript 5.0+ (strict mode)
+- **Runtime:** Chrome Browser (Manifest V3)
+- **UI Framework:** Custom components with Web Standards
+- **Archive Processing:** Streaming architecture for large files
+- **Testing:** Playwright E2E, Unit tests
+- **Build:** esbuild, npm workspaces
+- **CI/CD:** GitHub Actions
+
+**Key Architecture Principles:**
+- 🔒 **Local-first** - No remote servers
+- ⚡ **Web Workers** - CPU-intensive operations off main thread
+- 📦 **Monorepo** - Organized packages (`archive-core`, `archive-security`, `ui`, `extension`)
+- 🔐 **Minimal permissions** - Storage only
 
 ---
 
-## Roadmap
+## Documentation
 
-### Phase 0: Foundation (Current)
+| Category | Link |
+|----------|------|
+| 📚 **Getting Started** | [Development Setup](docs/development/development-setup.md) |
+| 🏗️ **Architecture** | [Architecture Overview](docs/architecture/) |
+| 🔐 **Security Model** | [Security Documentation](docs/security/) |
+| 🧪 **Testing** | [Testing Guide](docs/testing/) |
+| 🚀 **Release Process** | [Release Documentation](docs/release/) |
+| 📋 **Contributing** | [CONTRIBUTING.md](CONTRIBUTING.md) |
+| 🔒 **Security Policy** | [SECURITY.md](SECURITY.md) |
+| 💡 **Decisions (ADRs)** | [Architecture Decisions](docs/decisions/) |
 
-- Repository governance ✅
-- Architecture documentation ✅
-- Development standards ✅
-- CI/CD foundation (in progress)
+---
 
-### Phase 1-2: Extension Shell
+## Contributing
 
-- Manifest V3 setup
-- Popup and workspace UI
-- Local file selection
+We welcome contributions! ZipKit follows **issue-driven development** - all significant work starts with a GitHub issue.
 
-### Phase 3-4: Archive Support
+### Quick Contribution Guide
 
-- ZIP implementation
-- TAR/GZIP implementation
+1. 🔍 Find or create a GitHub issue
+2. 🌿 Create feature branch: `feature/<issue>-<description>`
+3. 💻 Make focused changes with tests
+4. ✅ Run quality checks: `npm run format && npm run lint && npm run test`
+5. 📝 Commit using [Conventional Commits](https://www.conventionalcommits.org/)
+6. 🚀 Open a Pull Request
 
-### Phase 5-6: Safety & Inspection
+**Important:**
+- Never commit directly to `main`
+- Keep changes small and focused
+- Add tests for behavioral changes
+- Update docs when behavior changes
 
-- Archive inspection UI
-- Safety scanning engine
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for complete guidelines.
 
-### Phase 7-8: UX Polish
+---
 
-- Creation experience
-- Extraction experience
+## Security & Privacy
 
-### Phase 9-10: Integration
+### 🔒 Security Model
 
-- Download integration
-- Public website
+ZipKit performs **real-time structural archive safety analysis**:
 
-### Phase 11-12: Hardening & Release
+- ✅ Path traversal detection
+- ✅ Archive bomb detection (expansion ratios)
+- ✅ Executable and script detection
+- ✅ Nested archive detection
+- ✅ Integrity verification
 
-- Cross-platform testing
-- Performance optimization
-- Official v0.1.0 release
+**⚠️ Important:** ZipKit is NOT antivirus software. It detects structural anomalies but cannot guarantee malware detection. Use alongside your existing security tools.
 
-See [GitHub Milestones](https://github.com/eyuelabebe/zipkit/milestones) for detailed roadmap.
+### 🔐 Privacy
+
+**ZipKit is 100% local-first:**
+
+- ✅ All processing happens in your browser
+- ✅ No remote servers or cloud uploads
+- ✅ No tracking or analytics
+- ✅ No data collection
+- ✅ Your archives stay private
+
+### 🐛 Reporting Vulnerabilities
+
+**Do not report security vulnerabilities in public issues.**
+
+Email security reports to: [security contact in SECURITY.md]
+
+See [SECURITY.md](SECURITY.md) for responsible disclosure process.
+
+---
+
+## Support
+
+- 📖 [Documentation](docs/)
+- 🐛 [Report Bug](https://github.com/eyuelabebe/zipkit/issues/new?labels=bug)
+- 💡 [Request Feature](https://github.com/eyuelabebe/zipkit/issues/new?labels=enhancement)
+- 💬 [Discussions](https://github.com/eyuelabebe/zipkit/discussions)
 
 ---
 
@@ -259,12 +267,14 @@ See [GitHub Milestones](https://github.com/eyuelabebe/zipkit/milestones) for det
 
 MIT License - see [LICENSE](LICENSE)
 
----
-
-## Acknowledgments
-
-This project is built with modern web standards and focuses on user privacy and security.
+Copyright (c) 2024 ZipKit Contributors
 
 ---
 
-**Status**: Pre-MVP | **License**: MIT | **Privacy**: Local-First
+<div align="center">
+
+**Built with modern web standards • Focused on privacy and security • 100% local-first**
+
+[⭐ Star us on GitHub](https://github.com/eyuelabebe/zipkit) • [🐛 Report Issues](https://github.com/eyuelabebe/zipkit/issues) • [📖 Read Docs](docs/)
+
+</div>
