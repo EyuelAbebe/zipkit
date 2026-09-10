@@ -9,13 +9,7 @@ import {
   validatePath,
   type SecurityReport,
 } from '@zipkit/archive-security';
-import {
-  FileTreeComponent,
-  SecurityBadge,
-  AlertBox,
-  FileList,
-  type FileItem,
-} from '@zipkit/ui';
+import { FileTreeComponent, SecurityBadge, AlertBox, FileList, type FileItem } from '@zipkit/ui';
 
 type Mode = 'open' | 'create';
 
