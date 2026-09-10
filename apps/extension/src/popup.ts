@@ -301,7 +301,35 @@ function setupCreateScreen(): void {
     } else {
       compressionSelect.disabled = false;
     }
+
+    // Update destination display when format changes
+    updateArchiveDestination();
   });
+}
+
+function getArchiveName(): string {
+  // Get name from selected files/folders
+  if (selectedFiles.length === 1 && selectedFiles[0]) {
+    // Use the name of the single file/folder
+    const name = selectedFiles[0].name.replace(/\.[^/.]+$/, ''); // Remove extension
+    return name || 'archive';
+  } else if (selectedFiles.length > 1) {
+    // Use first file/folder name + count
+    const firstName = selectedFiles[0]?.name.replace(/\.[^/.]+$/, '') || 'files';
+    return `${firstName}-and-${selectedFiles.length - 1}-more`;
+  }
+  return 'my-archive';
+}
+
+function updateArchiveDestination(): void {
+  const formatSelect = document.getElementById('create-format-select') as HTMLSelectElement;
+  const destinationSpan = document.getElementById('archive-destination');
+
+  if (destinationSpan) {
+    const format = formatSelect.value || 'zip';
+    const archiveName = getArchiveName();
+    destinationSpan.textContent = `Downloads/${archiveName}.${format}`;
+  }
 }
 
 function setupCompleteScreen(): void {
@@ -665,7 +693,7 @@ function showCreateFilesView(): void {
   const filesCount = document.getElementById('files-count')!;
 
   emptyState.style.display = 'none';
-  filesView.style.display = 'block';
+  filesView.style.display = 'flex';
 
   // Build folder structure
   const folderStructure = buildFolderStructure(selectedFiles);
@@ -674,6 +702,9 @@ function showCreateFilesView(): void {
   filesCount.textContent = `${selectedFiles.length} file${selectedFiles.length === 1 ? '' : 's'} • ${formatFileSize(totalSize)}`;
 
   filesList.innerHTML = renderFolderStructure(folderStructure);
+
+  // Update destination display
+  updateArchiveDestination();
 
   // Add remove handlers
   filesList.querySelectorAll('.file-item-remove').forEach((btn) => {

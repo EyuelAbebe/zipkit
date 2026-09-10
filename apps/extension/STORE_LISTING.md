@@ -1,9 +1,11 @@
 # ZipKit - Chrome Web Store Listing
 
 ## Extension Name
+
 **ZipKit**
 
 ## Short Description (132 characters max)
+
 Zip. Unzip. Pack. Unpack. Inspect. Scan. A modern browser-based archive utility with built-in security scanning.
 
 ## Detailed Description
@@ -95,12 +97,14 @@ ZipKit is open source (MIT License). View code, report issues, or contribute at:
 **💡 HOW TO USE**
 
 Creating Archives:
+
 1. Click ZipKit icon in toolbar
 2. Drag & drop files or click "Create Archive"
 3. Choose format and compression level
 4. Save your archive
 
 Extracting Archives:
+
 1. Click ZipKit icon
 2. Drag & drop archive or click "Open Archive"
 3. Review security scan results
@@ -118,4 +122,3 @@ Extracting Archives:
 **DEVELOPER NOTE**: ZipKit is actively maintained and regularly updated. This extension is in active development—use with appropriate caution for critical workflows.
 
 Built with privacy, security, and user experience as top priorities.
-

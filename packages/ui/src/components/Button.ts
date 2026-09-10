@@ -44,7 +44,7 @@ export class Button {
 
   public setLoading(loading: boolean): void {
     this.isLoading = loading;
-    this.element.disabled = loading || (this.options.disabled || false);
+    this.element.disabled = loading || this.options.disabled || false;
 
     if (loading) {
       this.element.classList.add('loading');

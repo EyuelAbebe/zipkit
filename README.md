@@ -39,6 +39,7 @@ Core functionality is implemented and the extension is ready for testing. Securi
 <td width="50%">
 
 #### Archive Creation
+
 - ✅ ZIP, TAR, TAR.GZ formats
 - ✅ Drag & drop file selection
 - ✅ Folder selection with subdirectories
@@ -50,6 +51,7 @@ Core functionality is implemented and the extension is ready for testing. Securi
 <td width="50%">
 
 #### Archive Extraction
+
 - ✅ Safe extraction with validation
 - ✅ Browse contents before extracting
 - ✅ Selective file extraction
@@ -63,6 +65,7 @@ Core functionality is implemented and the extension is ready for testing. Securi
 <td width="50%">
 
 #### Security Scanning
+
 - ✅ Real-time security analysis
 - ✅ Path traversal detection
 - ✅ Archive bomb detection
@@ -74,6 +77,7 @@ Core functionality is implemented and the extension is ready for testing. Securi
 <td width="50%">
 
 #### User Experience
+
 - ✅ Dark modern UI theme
 - ✅ Modal-based workflow
 - ✅ Recent archives history
@@ -99,9 +103,11 @@ Core functionality is implemented and the extension is ready for testing. Securi
 <div align="center">
 
 ### Home & Archive Creation
+
 ![Home Screen](screenshot/screens-row.png)
 
 ### Extraction & Security Scanning
+
 ![Additional Screens](screenshot/zipkit-additional-screens.png)
 
 </div>
@@ -133,6 +139,7 @@ npm run build
 ```
 
 **Quick Commands:**
+
 ```bash
 make dev          # Install and build
 make load         # Build and show load instructions
@@ -175,6 +182,7 @@ See [Development Setup Guide](docs/development/development-setup.md) for detaile
 - **CI/CD:** GitHub Actions
 
 **Key Architecture Principles:**
+
 - 🔒 **Local-first** - No remote servers
 - ⚡ **Web Workers** - CPU-intensive operations off main thread
 - 📦 **Monorepo** - Organized packages (`archive-core`, `archive-security`, `ui`, `extension`)
@@ -184,16 +192,16 @@ See [Development Setup Guide](docs/development/development-setup.md) for detaile
 
 ## Documentation
 
-| Category | Link |
-|----------|------|
-| 📚 **Getting Started** | [Development Setup](docs/development/development-setup.md) |
-| 🏗️ **Architecture** | [Architecture Overview](docs/architecture/) |
-| 🔐 **Security Model** | [Security Documentation](docs/security/) |
-| 🧪 **Testing** | [Testing Guide](docs/testing/) |
-| 🚀 **Release Process** | [Release Documentation](docs/release/) |
-| 📋 **Contributing** | [CONTRIBUTING.md](CONTRIBUTING.md) |
-| 🔒 **Security Policy** | [SECURITY.md](SECURITY.md) |
-| 💡 **Decisions (ADRs)** | [Architecture Decisions](docs/decisions/) |
+| Category                | Link                                                       |
+| ----------------------- | ---------------------------------------------------------- |
+| 📚 **Getting Started**  | [Development Setup](docs/development/development-setup.md) |
+| 🏗️ **Architecture**     | [Architecture Overview](docs/architecture/)                |
+| 🔐 **Security Model**   | [Security Documentation](docs/security/)                   |
+| 🧪 **Testing**          | [Testing Guide](docs/testing/)                             |
+| 🚀 **Release Process**  | [Release Documentation](docs/release/)                     |
+| 📋 **Contributing**     | [CONTRIBUTING.md](CONTRIBUTING.md)                         |
+| 🔒 **Security Policy**  | [SECURITY.md](SECURITY.md)                                 |
+| 💡 **Decisions (ADRs)** | [Architecture Decisions](docs/decisions/)                  |
 
 ---
 
@@ -211,6 +219,7 @@ We welcome contributions! ZipKit follows **issue-driven development** - all sign
 6. 🚀 Open a Pull Request
 
 **Important:**
+
 - Never commit directly to `main`
 - Keep changes small and focused
 - Add tests for behavioral changes

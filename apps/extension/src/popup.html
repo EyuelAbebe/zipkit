@@ -473,53 +473,60 @@
         </div>
 
         <div id="create-files-view" class="files-view" style="display: none">
-          <div class="files-header">
-            <h3>Files to Package</h3>
-            <span id="files-count" class="meta">0 files selected</span>
-          </div>
-
-          <div class="format-selector">
-            <div class="format-group">
-              <label>Archive Format</label>
-              <select id="create-format-select" class="select-input">
-                <option value="zip">ZIP</option>
-                <option value="tar">TAR</option>
-                <option value="7z">7-Zip (7z)</option>
-                <option value="rar" disabled>RAR (View Only)</option>
-              </select>
+          <div class="files-view-content">
+            <div class="files-header">
+              <h3>Files to Package</h3>
+              <span id="files-count" class="meta">0 files selected</span>
             </div>
-            <div class="format-group">
-              <label>Compression</label>
-              <select id="create-compression-select" class="select-input">
-                <option value="none">Store (No compression)</option>
-                <option value="gzip">GZIP (.gz)</option>
-                <option value="bzip2">BZIP2 (.bz2)</option>
-                <option value="xz">XZ (.xz)</option>
-              </select>
+
+            <div class="format-selector">
+              <div class="format-group">
+                <label>Archive Format</label>
+                <select id="create-format-select" class="select-input">
+                  <option value="zip">ZIP</option>
+                  <option value="tar">TAR</option>
+                  <option value="7z">7-Zip (7z)</option>
+                  <option value="rar" disabled>RAR (View Only)</option>
+                </select>
+              </div>
+              <div class="format-group">
+                <label>Compression</label>
+                <select id="create-compression-select" class="select-input">
+                  <option value="none">Store (No compression)</option>
+                  <option value="gzip">GZIP (.gz)</option>
+                  <option value="bzip2">BZIP2 (.bz2)</option>
+                  <option value="xz">XZ (.xz)</option>
+                </select>
+              </div>
             </div>
-          </div>
 
-          <div class="files-list" id="create-files-list">
-            <!-- Selected files will appear here -->
-          </div>
+            <div class="destination-info">
+              <strong>Save Location</strong>
+              <span id="archive-destination">Downloads/my-archive.zip</span>
+            </div>
 
-          <div class="format-note">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="16" x2="12" y2="12" />
-              <line x1="12" y1="8" x2="12.01" y2="8" />
-            </svg>
-            <p>
-              <strong>Format Support:</strong> ZIP, TAR, and 7z archives work on all platforms. RAR
-              archives can be viewed but not created due to proprietary format.
-            </p>
+            <div class="files-list" id="create-files-list">
+              <!-- Selected files will appear here -->
+            </div>
+
+            <div class="format-note">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+              </svg>
+              <p>
+                <strong>Format Support:</strong> ZIP, TAR, and 7z archives work on all platforms.
+                RAR archives can be viewed but not created due to proprietary format.
+              </p>
+            </div>
           </div>
 
           <div class="footer-actions">

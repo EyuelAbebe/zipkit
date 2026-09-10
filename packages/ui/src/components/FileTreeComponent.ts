@@ -109,7 +109,9 @@ export class FileTreeComponent {
       checkbox.type = 'checkbox';
       checkbox.className = 'node-checkbox';
       checkbox.checked = this.selectedPaths.has(child.path);
-      checkbox.addEventListener('change', () => this.handleCheckboxChange(child.path, checkbox.checked));
+      checkbox.addEventListener('change', () =>
+        this.handleCheckboxChange(child.path, checkbox.checked)
+      );
 
       // Icon
       const icon = document.createElement('span');
