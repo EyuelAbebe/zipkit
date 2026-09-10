@@ -60,7 +60,7 @@ function setupHomeScreen(): void {
     e.preventDefault();
     dropZone.classList.remove('drag-over');
     const files = e.dataTransfer?.files;
-    if (files && files.length > 0) {
+    if (files && files.length > 0 && files[0]) {
       handleFileSelection(files[0]);
     }
   });
@@ -120,7 +120,8 @@ function setupDestinationScreen(): void {
   const folderNamePreview = document.getElementById('folder-name-preview')!;
 
   // Set default folder name from archive
-  const archiveName = currentArchive?.name?.replace(/\.(zip|tar|gz|7z|rar)$/i, '') || 'extracted-files';
+  const archiveName =
+    currentArchive?.name?.replace(/\.(zip|tar|gz|7z|rar)$/i, '') || 'extracted-files';
   folderNameInput.value = archiveName;
   folderNamePreview.textContent = archiveName;
 
@@ -146,7 +147,7 @@ function setupDestinationScreen(): void {
     try {
       const dirHandle = await (window as any).showDirectoryPicker({
         mode: 'readwrite',
-        startIn: 'downloads'
+        startIn: 'downloads',
       });
 
       // Create subfolder with the specified name
@@ -155,7 +156,9 @@ function setupDestinationScreen(): void {
       selectedDirectoryHandle = subfolderHandle;
 
       // Start extraction immediately
-      await startExtractionWithHandle(selectedDirectoryHandle, true);
+      if (selectedDirectoryHandle) {
+        await startExtractionWithHandle(selectedDirectoryHandle);
+      }
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
         console.error('Error selecting folder:', error);
@@ -166,7 +169,7 @@ function setupDestinationScreen(): void {
   });
 }
 
-async function selectDestinationFolder(destinationInput: HTMLInputElement | HTMLSpanElement): Promise<void> {
+async function selectDestinationFolder(): Promise<void> {
   try {
     // Chrome extensions can't use File System Access API in popups
     // We'll use a text input to let user specify a folder name
@@ -178,7 +181,8 @@ async function selectDestinationFolder(destinationInput: HTMLInputElement | HTML
     const confirmBtn = document.getElementById('confirm-destination-btn')!;
 
     // Default folder name based on archive name
-    const defaultName = currentArchive?.name.replace(/\.(zip|tar|gz|tgz|rar|7z)$/i, '') || 'extracted-files';
+    const defaultName =
+      currentArchive?.name.replace(/\.(zip|tar|gz|tgz|rar|7z)$/i, '') || 'extracted-files';
 
     // Show the folder display with editable name
     folderNameSpan.textContent = defaultName;
@@ -212,14 +216,13 @@ async function selectDestinationFolder(destinationInput: HTMLInputElement | HTML
       folderNameSpan.contentEditable = 'false';
       folderNameSpan.style.cursor = 'default';
     });
-
   } catch (err: any) {
     console.error('Error selecting folder:', err);
     alert('Failed to select folder. Please try again.');
   }
 }
 
-async function startExtractionWithHandle(dirHandle: FileSystemDirectoryHandle, openAfterExtract: boolean = true): Promise<void> {
+async function startExtractionWithHandle(dirHandle: FileSystemDirectoryHandle): Promise<void> {
   navigateToScreen('progress');
 
   const progressTitle = document.getElementById('progress-title')!;
@@ -302,7 +305,9 @@ function setupCreateScreen(): void {
 
   // Handle format selection changes to update compression options
   const formatSelect = document.getElementById('create-format-select') as HTMLSelectElement;
-  const compressionSelect = document.getElementById('create-compression-select') as HTMLSelectElement;
+  const compressionSelect = document.getElementById(
+    'create-compression-select'
+  ) as HTMLSelectElement;
 
   formatSelect.addEventListener('change', () => {
     const format = formatSelect.value;
@@ -325,7 +330,7 @@ function setupCompleteScreen(): void {
     // Use Chrome downloads API to show downloaded files
     try {
       const downloads = await chrome.downloads.search({ limit: 1, orderBy: ['-startTime'] });
-      if (downloads.length > 0) {
+      if (downloads.length > 0 && downloads[0]) {
         // Show the downloaded file in the system file manager
         chrome.downloads.show(downloads[0].id);
       } else {
@@ -357,9 +362,11 @@ function setupSettingsScreen(): void {
     const scanCheck = document.getElementById('scan-before-extract') as HTMLInputElement;
     const openFolderCheck = document.getElementById('open-folder') as HTMLInputElement;
 
-    if (result.format) formatSelect.value = result.format;
-    if (result.scanBeforeExtract !== undefined) scanCheck.checked = result.scanBeforeExtract;
-    if (result.openFolder !== undefined) openFolderCheck.checked = result.openFolder;
+    if (result.format && typeof result.format === 'string') formatSelect.value = result.format;
+    if (result.scanBeforeExtract !== undefined && typeof result.scanBeforeExtract === 'boolean')
+      scanCheck.checked = result.scanBeforeExtract;
+    if (result.openFolder !== undefined && typeof result.openFolder === 'boolean')
+      openFolderCheck.checked = result.openFolder;
   });
 
   // Save settings on change
@@ -439,7 +446,11 @@ async function startSecurityScan(file: File): Promise<void> {
 
   const checks = [
     { name: 'File Types', description: 'Checking for executable files', duration: 600 },
-    { name: 'Nested Archives', description: 'Detecting recursively packed containers', duration: 800 },
+    {
+      name: 'Nested Archives',
+      description: 'Detecting recursively packed containers',
+      duration: 800,
+    },
     { name: 'Path Traversal', description: 'Validating file paths', duration: 500 },
     { name: 'File Sizes', description: 'Analyzing compression ratios', duration: 700 },
     { name: 'Integrity', description: 'Verifying archive structure', duration: 600 },
@@ -485,7 +496,7 @@ async function startSecurityScan(file: File): Promise<void> {
   loadArchiveContents(file);
 }
 
-function loadArchiveContents(file: File): void {
+function loadArchiveContents(_file: File): void {
   // In real implementation, use archive-core to read contents
   // For now, show a sample file tree
   const fileTree = document.getElementById('extract-file-tree')!;
@@ -517,7 +528,7 @@ function loadArchiveContents(file: File): void {
   `;
 }
 
-function startExtraction(destination: string, openAfterExtract: boolean = true): void {
+function startExtraction(destination: string): void {
   const progressTitle = document.getElementById('progress-title')!;
   const progressFilename = document.getElementById('progress-filename')!;
 
@@ -561,20 +572,28 @@ function formatFileSize(bytes: number): string {
 }
 
 // Recent Archives Management
+interface RecentArchive {
+  name: string;
+  size: string;
+  date: string;
+}
+
 async function loadRecentArchives(): Promise<void> {
   const result = await chrome.storage.local.get('recentArchives');
-  const recent = result.recentArchives || [];
+  const recent = (result.recentArchives || []) as RecentArchive[];
 
   const recentList = document.getElementById('recent-list')!;
 
   if (recent.length === 0) {
-    recentList.innerHTML = '<p style="color: #9aa0a6; font-size: 13px; padding: 12px;">No recent archives</p>';
+    recentList.innerHTML =
+      '<p style="color: #9aa0a6; font-size: 13px; padding: 12px;">No recent archives</p>';
     return;
   }
 
   recentList.innerHTML = recent
     .slice(0, 3)
-    .map((item: any) => `
+    .map(
+      (item: RecentArchive) => `
       <div class="recent-item" data-name="${item.name}">
         <div class="recent-item-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -586,22 +605,23 @@ async function loadRecentArchives(): Promise<void> {
           <div class="recent-item-meta">${item.size} • ${item.date}</div>
         </div>
       </div>
-    `)
+    `
+    )
     .join('');
 }
 
 async function addToRecentArchives(name: string, size: string): Promise<void> {
   const result = await chrome.storage.local.get('recentArchives');
-  const recent = result.recentArchives || [];
+  const recent = (result.recentArchives || []) as RecentArchive[];
 
-  const newItem = {
+  const newItem: RecentArchive = {
     name,
     size,
     date: new Date().toLocaleDateString(),
   };
 
   // Add to beginning, remove duplicates, keep only last 10
-  const updated = [newItem, ...recent.filter((r: any) => r.name !== name)].slice(0, 10);
+  const updated = [newItem, ...recent.filter((r: RecentArchive) => r.name !== name)].slice(0, 10);
 
   await chrome.storage.local.set({ recentArchives: updated });
   await loadRecentArchives();
@@ -684,13 +704,14 @@ function buildFolderStructure(files: File[]): Map<string, FolderNode> {
     // Get the relative path from the file
     // @ts-ignore - webkitRelativePath exists on File when using webkitdirectory
     const relativePath = file.webkitRelativePath || file.name;
-    const parts = relativePath.split('/');
+    const parts = relativePath.split('/').filter((p) => p); // Remove empty parts
 
     let currentLevel = root;
 
     // Build folder hierarchy
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
+      if (!part) continue; // Skip empty parts
       const isFile = i === parts.length - 1;
 
       if (!currentLevel.has(part)) {
@@ -761,7 +782,9 @@ function startArchiveCreation(): void {
   if (selectedFiles.length === 0) return;
 
   const formatSelect = document.getElementById('create-format-select') as HTMLSelectElement;
-  const compressionSelect = document.getElementById('create-compression-select') as HTMLSelectElement;
+  const compressionSelect = document.getElementById(
+    'create-compression-select'
+  ) as HTMLSelectElement;
   const format = formatSelect.value;
   const compression = compressionSelect.value;
 
@@ -772,9 +795,9 @@ function startArchiveCreation(): void {
     if (format === 'tar') {
       // TAR with compression: tar.gz, tar.bz2, tar.xz
       const compressionExtMap: Record<string, string> = {
-        'gzip': 'tar.gz',
-        'bzip2': 'tar.bz2',
-        'xz': 'tar.xz'
+        gzip: 'tar.gz',
+        bzip2: 'tar.bz2',
+        xz: 'tar.xz',
       };
       extension = compressionExtMap[compression] || 'tar';
     } else if (format === 'zip' || format === '7z') {

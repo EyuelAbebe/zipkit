@@ -1,6 +1,6 @@
 {
   "name": "@zipkit/ui",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "description": "UI components for ZipKit",
   "main": "./dist/index.js",

@@ -57,9 +57,13 @@ try {
   process.exit(1);
 }
 
-// Copy manifest.json
-console.log('Copying manifest.json...');
-copyFileSync(join(__dirname, 'manifest.json'), join(distDir, 'manifest.json'));
+// Copy manifest.json and inject version from package.json
+console.log('Copying manifest.json and injecting version...');
+const packageJson = JSON.parse(readFileSync(join(__dirname, 'package.json'), 'utf8'));
+const manifestJson = JSON.parse(readFileSync(join(__dirname, 'manifest.json'), 'utf8'));
+manifestJson.version = packageJson.version;
+writeFileSync(join(distDir, 'manifest.json'), JSON.stringify(manifestJson, null, 2));
+console.log(`✓ Manifest version set to ${packageJson.version}`);
 
 // Copy HTML files
 console.log('Copying HTML files...');
@@ -73,7 +77,16 @@ copyFileSync(join(__dirname, 'src', 'workspace.css'), join(distDir, 'workspace.c
 
 // Copy UI component styles
 console.log('Copying UI component styles...');
-const uiStylesPath = join(__dirname, '..', '..', 'packages', 'ui', 'src', 'styles', 'components.css');
+const uiStylesPath = join(
+  __dirname,
+  '..',
+  '..',
+  'packages',
+  'ui',
+  'src',
+  'styles',
+  'components.css'
+);
 try {
   const uiStyles = readFileSync(uiStylesPath, 'utf8');
   writeFileSync(join(distDir, 'components.css'), uiStyles);

@@ -1,6 +1,6 @@
 {
   "name": "zipkit",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "private": true,
   "description": "Zip. Unzip. Pack. Unpack. Inspect. Scan. A modern Chrome extension and browser-based archive utility.",
