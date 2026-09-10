@@ -45,7 +45,7 @@ export class FileTreeComponent {
     });
 
     for (const entry of sortedEntries) {
-      const parts = entry.path.split('/').filter((p) => p);
+      const parts = entry.path.split('/').filter((p: string) => p);
       let currentPath = '';
 
       for (let i = 0; i < parts.length; i++) {
