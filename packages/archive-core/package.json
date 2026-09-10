@@ -22,7 +22,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --build",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit"
   },
