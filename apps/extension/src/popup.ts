@@ -33,6 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Load recent archives
   loadRecentArchives();
+
+  // Load and display version
+  loadVersion();
 });
 
 function setupHomeScreen(): void {
@@ -847,4 +850,17 @@ function startArchiveCreation(): void {
       }, 500);
     }
   }, 300);
+}
+
+// Version Management
+async function loadVersion(): Promise<void> {
+  try {
+    const manifest = chrome.runtime.getManifest();
+    const versionSpan = document.getElementById('app-version');
+    if (versionSpan) {
+      versionSpan.textContent = manifest.version;
+    }
+  } catch (error) {
+    console.error('Failed to load version:', error);
+  }
 }
