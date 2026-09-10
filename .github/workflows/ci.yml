@@ -50,6 +50,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build packages for type checking
+        run: |
+          npm run build --workspace=packages/archive-core
+          npm run build --workspace=packages/archive-security
+          npm run build --workspace=packages/shared
+          npm run build --workspace=packages/ui
+
       - name: Run type checker
         run: npm run typecheck
 
@@ -93,8 +100,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build project
-        run: npm run build
+      - name: Build packages in order
+        run: |
+          npm run build --workspace=packages/archive-core
+          npm run build --workspace=packages/archive-security
+          npm run build --workspace=packages/shared
+          npm run build --workspace=packages/ui
+          npm run build --workspace=apps/extension
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
