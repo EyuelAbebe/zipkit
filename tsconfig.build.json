@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/archive-core" },
+    { "path": "./packages/archive-security" },
+    { "path": "./packages/shared" },
+    { "path": "./packages/ui" }
+  ]
+}
