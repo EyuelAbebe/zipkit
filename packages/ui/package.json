@@ -12,8 +12,8 @@
     }
   },
   "scripts": {
-    "build": "tsc",
-    "clean": "rm -rf dist"
+    "build": "tsc --build",
+    "clean": "rm -rf dist *.tsbuildinfo"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

@@ -100,7 +100,8 @@ console.log('Generating icon files...');
 
 // Simple base64 encoded 1x1 PNG with blue color as placeholder
 // In production, use proper tools like sharp or @squoosh/lib to convert SVG to PNG
-const createSimpleIcon = (size) => {
+// eslint-disable-next-line no-unused-vars
+const createSimpleIcon = (_size) => {
   // This creates a simple blue square PNG (base64 encoded)
   // A minimal PNG file header + blue pixel data
   const pngHeader =
