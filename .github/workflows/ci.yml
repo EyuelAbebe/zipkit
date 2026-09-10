@@ -51,7 +51,11 @@ jobs:
         run: npm ci
 
       - name: Build packages for type checking
-        run: npx tsc --build tsconfig.build.json
+        run: |
+          npm run build --workspace=packages/archive-core
+          npm run build --workspace=packages/archive-security
+          npm run build --workspace=packages/shared
+          npm run build --workspace=packages/ui
 
       - name: Run type checker
         run: npm run typecheck
@@ -98,7 +102,10 @@ jobs:
 
       - name: Build packages in order
         run: |
-          npx tsc --build tsconfig.build.json
+          npm run build --workspace=packages/archive-core
+          npm run build --workspace=packages/archive-security
+          npm run build --workspace=packages/shared
+          npm run build --workspace=packages/ui
           npm run build --workspace=apps/extension
 
       - name: Upload build artifacts

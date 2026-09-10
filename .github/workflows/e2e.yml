@@ -38,7 +38,10 @@ jobs:
 
       - name: Build extension
         run: |
-          npx tsc --build tsconfig.build.json
+          npm run build --workspace=packages/archive-core
+          npm run build --workspace=packages/archive-security
+          npm run build --workspace=packages/shared
+          npm run build --workspace=packages/ui
           npm run build --workspace=apps/extension
 
       - name: Run E2E tests

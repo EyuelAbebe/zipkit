@@ -12,7 +12,7 @@
     }
   },
   "scripts": {
-    "build": "tsc --build",
+    "build": "tsc",
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "devDependencies": {
