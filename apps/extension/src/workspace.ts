@@ -11,7 +11,6 @@ import {
 } from '@zipkit/archive-security';
 import {
   FileTreeComponent,
-  ProgressBar,
   SecurityBadge,
   AlertBox,
   FileList,
@@ -20,7 +19,6 @@ import {
 
 type Mode = 'open' | 'create';
 
-let _currentMode: Mode = 'open';
 let currentAdapter: ArchiveAdapter | null = null;
 let currentEntries: ArchiveEntry[] = [];
 let currentFile: File | null = null;
@@ -28,7 +26,6 @@ let selectedFiles: File[] = [];
 
 // UI Components
 let fileTreeComponent: FileTreeComponent | null = null;
-let _progressBar: ProgressBar | null = null;
 let securityBadge: SecurityBadge | null = null;
 let alertBox: AlertBox | null = null;
 let fileList: FileList | null = null;
@@ -63,7 +60,8 @@ function setupNavigation(): void {
 }
 
 function switchView(mode: Mode): void {
-  _currentMode = mode;
+  // TODO: Track mode when implementing mode switching
+  // currentMode = mode;
 
   const navButtons = document.querySelectorAll('.nav-button');
   navButtons.forEach((btn) => btn.classList.remove('active'));
@@ -484,11 +482,14 @@ async function createArchive(): Promise<void> {
   const compressionSelect = document.getElementById('compression-select') as HTMLSelectElement;
 
   const format = formatSelect?.value || 'zip';
-  const _compressionLevel = parseInt(compressionSelect?.value || '6', 10);
+  const compressionLevel = parseInt(compressionSelect?.value || '6', 10);
+  // TODO: Use compressionLevel when implementing compression
+  void compressionLevel;
 
   try {
     // Ask user where to save
-    const _fileHandle = await (window as any).showSaveFilePicker({
+    // TODO: Use fileHandle when implementing file saving
+    const fileHandle = await (window as any).showSaveFilePicker({
       suggestedName: `archive.${format}`,
       types: [
         {
@@ -497,6 +498,7 @@ async function createArchive(): Promise<void> {
         },
       ],
     });
+    void fileHandle;
 
     showProgress('Creating archive...', 0);
 
