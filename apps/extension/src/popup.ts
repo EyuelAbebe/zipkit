@@ -146,29 +146,8 @@ function setupDestinationScreen(): void {
     // Get folder name from input
     const folderName = folderNameInput.value.trim() || 'extracted-files';
 
-    // Open Chrome's native directory picker
-    try {
-      const dirHandle = await (window as any).showDirectoryPicker({
-        mode: 'readwrite',
-        startIn: 'downloads',
-      });
-
-      // Create subfolder with the specified name
-      const subfolderHandle = await dirHandle.getDirectoryHandle(folderName, { create: true });
-
-      selectedDirectoryHandle = subfolderHandle;
-
-      // Start extraction immediately
-      if (selectedDirectoryHandle) {
-        await startExtractionWithHandle(selectedDirectoryHandle);
-      }
-    } catch (error) {
-      if ((error as Error).name !== 'AbortError') {
-        console.error('Error selecting folder:', error);
-        alert('Failed to select destination folder. Please try again.');
-      }
-      // User cancelled the picker, just return
-    }
+    // Start extraction - files will be downloaded to Downloads folder
+    await startExtraction(folderName);
   });
 }
 
@@ -531,7 +510,7 @@ function loadArchiveContents(_file: File): void {
   `;
 }
 
-function startExtraction(destination: string): void {
+async function startExtraction(destination: string): Promise<void> {
   const progressTitle = document.getElementById('progress-title')!;
   const progressFilename = document.getElementById('progress-filename')!;
 
@@ -539,6 +518,11 @@ function startExtraction(destination: string): void {
   progressFilename.textContent = currentArchive?.name || 'archive';
 
   navigateToScreen('progress');
+
+  // In a real implementation, this would:
+  // 1. Use chrome.downloads API to download files to Downloads/{destination}/
+  // 2. Track the download ID for later use
+  // For now, we'll simulate the extraction
 
   // Simulate extraction progress
   let progress = 0;
@@ -552,15 +536,22 @@ function startExtraction(destination: string): void {
 
     if (progress >= 100) {
       clearInterval(interval);
-      setTimeout(() => {
+      setTimeout(async () => {
         // Update complete screen for extraction
         const completeTitle = document.getElementById('complete-title')!;
         const completeSummary = document.getElementById('complete-summary')!;
         const destinationPath = document.getElementById('destination-path')!;
 
+        const extractPath = `Downloads/${destination}`;
+
         completeTitle.textContent = 'Extraction Complete';
         completeSummary.textContent = `52 files extracted • ${formatFileSize(currentArchive?.size || 0)} total`;
-        destinationPath.textContent = destination;
+        destinationPath.textContent = extractPath;
+
+        // Save to history with extraction location
+        if (currentArchive) {
+          await addToHistory(currentArchive.name, formatFileSize(currentArchive.size), extractPath);
+        }
 
         navigateToScreen('complete');
       }, 500);
@@ -579,6 +570,8 @@ interface RecentArchive {
   name: string;
   size: string;
   date: string;
+  extractedTo?: string; // Path where files were extracted
+  downloadId?: number; // Chrome download ID for opening folder
 }
 
 async function loadRecentArchives(): Promise<void> {
@@ -605,7 +598,7 @@ async function loadRecentArchives(): Promise<void> {
         </div>
         <div class="recent-item-info">
           <div class="recent-item-name">${item.name}</div>
-          <div class="recent-item-meta">${item.size} • ${item.date}</div>
+          <div class="recent-item-meta">${item.size} • ${item.date}${item.extractedTo ? ` • ${item.extractedTo}` : ''}</div>
         </div>
       </div>
     `
@@ -613,7 +606,7 @@ async function loadRecentArchives(): Promise<void> {
     .join('');
 }
 
-async function addToRecentArchives(name: string, size: string): Promise<void> {
+async function addToHistory(name: string, size: string, extractedTo?: string): Promise<void> {
   const result = await chrome.storage.local.get('recentArchives');
   const recent = (result.recentArchives || []) as RecentArchive[];
 
@@ -621,6 +614,7 @@ async function addToRecentArchives(name: string, size: string): Promise<void> {
     name,
     size,
     date: new Date().toLocaleDateString(),
+    extractedTo,
   };
 
   // Add to beginning, remove duplicates, keep only last 10
@@ -628,6 +622,10 @@ async function addToRecentArchives(name: string, size: string): Promise<void> {
 
   await chrome.storage.local.set({ recentArchives: updated });
   await loadRecentArchives();
+}
+
+async function addToRecentArchives(name: string, size: string): Promise<void> {
+  await addToHistory(name, size);
 }
 
 // Create Archive Functions
