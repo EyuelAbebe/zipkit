@@ -4,6 +4,13 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable", "WebWorker"],
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@zipkit/archive-core": ["./packages/archive-core/src"],
+      "@zipkit/archive-security": ["./packages/archive-security/src"],
+      "@zipkit/shared": ["./packages/shared/src"],
+      "@zipkit/ui": ["./packages/ui/src"]
+    },
     "resolveJsonModule": true,
     "allowJs": false,
     "strict": true,

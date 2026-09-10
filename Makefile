@@ -1,4 +1,4 @@
-mak.PHONY: help install clean build test lint format check dev extension load package upload release-verify release-rc release-promote
+.PHONY: help install clean build test lint format check dev extension load package upload release-verify release-rc release-promote pre-commit
 
 help:
 	@echo "ZipKit Development Commands"
@@ -11,6 +11,7 @@ help:
 	@echo "  make lint        Run linter"
 	@echo "  make format      Format code with Prettier"
 	@echo "  make check       Run all quality checks (format, lint, typecheck)"
+	@echo "  make pre-commit  Run format and lint (used by git pre-commit hook)"
 	@echo ""
 	@echo "Extension:"
 	@echo "  make extension   Build extension only"
@@ -53,6 +54,10 @@ check:
 	npm run format:check
 	npm run lint
 	npm run typecheck
+
+pre-commit: format
+	npm run lint
+	@echo "✓ Code formatted and linted"
 
 extension:
 	npm run build --workspace=@zipkit/extension
