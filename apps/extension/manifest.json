@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ZipKit - Archive Manager",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Zip. Unzip. Pack. Unpack. Inspect. Scan. A modern, secure archive utility with built-in security scanning.",
   "author": "Eyuel Abebe",
   "homepage_url": "https://github.com/eyuelabebe/zipkit",
