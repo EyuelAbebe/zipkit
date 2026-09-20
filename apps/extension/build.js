@@ -95,28 +95,103 @@ try {
   console.warn('Warning: Could not copy UI component styles:', error.message);
 }
 
-// Generate icon files
-console.log('Generating icon files...');
+// Generate icon files from SVG
+console.log('Generating icon files from SVG...');
 
-// Simple base64 encoded 1x1 PNG with blue color as placeholder
-// In production, use proper tools like sharp or @squoosh/lib to convert SVG to PNG
-// eslint-disable-next-line no-unused-vars
-const createSimpleIcon = (_size) => {
-  // This creates a simple blue square PNG (base64 encoded)
-  // A minimal PNG file header + blue pixel data
-  const pngHeader =
-    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
-  return Buffer.from(pngHeader, 'base64');
-};
+// Read the source SVG
+const iconSvgPath = join(__dirname, 'icons', 'icon.svg');
+const iconSvg = readFileSync(iconSvgPath, 'utf8');
 
+// Create HTML file that will render SVG to canvas and export as PNG
 const sizes = [16, 32, 48, 128];
-sizes.forEach((size) => {
-  // For now, create a minimal placeholder PNG
-  // TODO: Use sharp or similar tool to properly convert icon.svg to PNG
-  writeFileSync(join(distDir, 'icons', `icon-${size}.png`), createSimpleIcon(size));
-});
+const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Icon Generator</title>
+</head>
+<body style="margin: 0; padding: 20px; font-family: monospace;">
+  <h2>ZipKit Icon Generator</h2>
+  <p>Open this file in a browser and click the buttons to download icons:</p>
+  <div id="icons"></div>
+  <script>
+    const iconSvg = \`${iconSvg}\`;
+    const sizes = ${JSON.stringify(sizes)};
 
-console.log('✓ Icons generated (using placeholder - install sharp for proper icons)');
+    function generateIcon(size) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      const img = new Image();
+      const svgBlob = new Blob([iconSvg], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(svgBlob);
+
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0, size, size);
+        canvas.toBlob(function(blob) {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = \`icon-\${size}.png\`;
+          a.click();
+          URL.revokeObjectURL(a.href);
+        }, 'image/png');
+        URL.revokeObjectURL(url);
+      };
+
+      img.src = url;
+    }
+
+    const container = document.getElementById('icons');
+    sizes.forEach(size => {
+      const btn = document.createElement('button');
+      btn.textContent = \`Download icon-\${size}.png\`;
+      btn.style.cssText = 'margin: 5px; padding: 10px 20px; font-size: 14px; cursor: pointer;';
+      btn.onclick = () => generateIcon(size);
+      container.appendChild(btn);
+      container.appendChild(document.createElement('br'));
+    });
+
+    // Auto-generate all icons button
+    const autoBtn = document.createElement('button');
+    autoBtn.textContent = 'Download All Icons';
+    autoBtn.style.cssText = 'margin: 10px 5px; padding: 12px 24px; font-size: 16px; font-weight: bold; background: #2563EB; color: white; border: none; border-radius: 6px; cursor: pointer;';
+    autoBtn.onclick = () => {
+      sizes.forEach((size, i) => {
+        setTimeout(() => generateIcon(size), i * 500);
+      });
+    };
+    container.appendChild(autoBtn);
+  </script>
+</body>
+</html>
+`;
+
+// Write the HTML generator file
+writeFileSync(join(__dirname, 'generate-icons.html'), htmlContent);
+
+// Try to use resvg for PNG generation if available
+try {
+  const resvgModule = await import('@resvg/resvg-js');
+  const { Resvg } = resvgModule;
+
+  sizes.forEach((size) => {
+    const resvg = new Resvg(iconSvg, { fitTo: { mode: 'width', value: size } });
+    const pngData = resvg.render().asPng();
+    writeFileSync(join(distDir, 'icons', `icon-${size}.png`), pngData);
+  });
+
+  console.log('✓ PNG icons generated');
+} catch {
+  // Fallback: copy SVG files
+  sizes.forEach((size) => {
+    const outputPath = join(distDir, 'icons', `icon-${size}.svg`);
+    writeFileSync(outputPath, iconSvg);
+  });
+  console.log('✓ SVG icons copied (install @resvg/resvg-js for PNG icons)');
+}
 
 console.log('✓ Build complete! Extension is ready in ./dist');
 console.log('');

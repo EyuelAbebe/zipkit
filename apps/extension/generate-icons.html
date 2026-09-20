@@ -1,127 +1,87 @@
 <!doctype html>
 <html>
   <head>
-    <title>Generate ZipKit Icons</title>
-    <style>
-      body {
-        font-family: system-ui;
-        padding: 20px;
-      }
-      canvas {
-        border: 1px solid #ccc;
-        margin: 10px;
-      }
-      .icon-group {
-        margin: 20px 0;
-      }
-    </style>
+    <meta charset="UTF-8" />
+    <title>Icon Generator</title>
   </head>
-  <body>
-    <h1>ZipKit Icon Generator</h1>
-    <p>Right-click each canvas and "Save image as..." to download the PNG icons.</p>
-
-    <div class="icon-group">
-      <h2>16x16</h2>
-      <canvas id="icon16" width="16" height="16"></canvas>
-    </div>
-
-    <div class="icon-group">
-      <h2>32x32</h2>
-      <canvas id="icon32" width="32" height="32"></canvas>
-    </div>
-
-    <div class="icon-group">
-      <h2>48x48</h2>
-      <canvas id="icon48" width="48" height="48"></canvas>
-    </div>
-
-    <div class="icon-group">
-      <h2>128x128</h2>
-      <canvas id="icon128" width="128" height="128"></canvas>
-    </div>
-
+  <body style="margin: 0; padding: 20px; font-family: monospace">
+    <h2>ZipKit Icon Generator</h2>
+    <p>Open this file in a browser and click the buttons to download icons:</p>
+    <div id="icons"></div>
     <script>
-      function drawIcon(canvas) {
+      const iconSvg = `<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="128" height="128" rx="24" fill="#2563EB"/>
+
+  <!-- Zipper Design -->
+  <path d="M64 20 L64 108" stroke="white" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Zipper Teeth (Left) -->
+  <rect x="44" y="28" width="12" height="8" rx="2" fill="white"/>
+  <rect x="44" y="44" width="12" height="8" rx="2" fill="white"/>
+  <rect x="44" y="60" width="12" height="8" rx="2" fill="white"/>
+  <rect x="44" y="76" width="12" height="8" rx="2" fill="white"/>
+  <rect x="44" y="92" width="12" height="8" rx="2" fill="white"/>
+
+  <!-- Zipper Teeth (Right) -->
+  <rect x="72" y="28" width="12" height="8" rx="2" fill="white"/>
+  <rect x="72" y="44" width="12" height="8" rx="2" fill="white"/>
+  <rect x="72" y="60" width="12" height="8" rx="2" fill="white"/>
+  <rect x="72" y="76" width="12" height="8" rx="2" fill="white"/>
+  <rect x="72" y="92" width="12" height="8" rx="2" fill="white"/>
+
+  <!-- Zipper Pull -->
+  <circle cx="64" cy="48" r="8" fill="#FCD34D"/>
+</svg>
+`;
+      const sizes = [16, 32, 48, 128];
+
+      function generateIcon(size) {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
         const ctx = canvas.getContext('2d');
-        const size = canvas.width;
-        const scale = size / 128;
 
-        ctx.save();
-        ctx.scale(scale, scale);
+        const img = new Image();
+        const svgBlob = new Blob([iconSvg], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(svgBlob);
 
-        // Background
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, 128, 128);
+        img.onload = function () {
+          ctx.drawImage(img, 0, 0, size, size);
+          canvas.toBlob(function (blob) {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `icon-${size}.png`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+          }, 'image/png');
+          URL.revokeObjectURL(url);
+        };
 
-        // Zipper pull
-        ctx.fillStyle = '#6366F1';
-        ctx.beginPath();
-        ctx.arc(64, 24, 12, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = '#4F46E5';
-        ctx.lineWidth = 4;
-        ctx.stroke();
-
-        // Left zipper teeth
-        ctx.fillStyle = '#4F46E5';
-        roundRect(ctx, 40, 40, 12, 8, 2);
-        ctx.fill();
-        roundRect(ctx, 40, 52, 12, 8, 2);
-        ctx.fill();
-        roundRect(ctx, 40, 64, 12, 8, 2);
-        ctx.fill();
-        roundRect(ctx, 40, 76, 12, 8, 2);
-        ctx.fill();
-        roundRect(ctx, 40, 88, 12, 8, 2);
-        ctx.fill();
-        roundRect(ctx, 40, 100, 12, 8, 2);
-        ctx.fill();
-
-        // Right zipper teeth
-        roundRect(ctx, 76, 40, 12, 8, 2);
-        ctx.fill();
-        roundRect(ctx, 76, 52, 12, 8, 2);
-        ctx.fill();
-        roundRect(ctx, 76, 64, 12, 8, 2);
-        ctx.fill();
-        roundRect(ctx, 76, 76, 12, 8, 2);
-        ctx.fill();
-        roundRect(ctx, 76, 88, 12, 8, 2);
-        ctx.fill();
-        roundRect(ctx, 76, 100, 12, 8, 2);
-        ctx.fill();
-
-        // Center zipper line
-        ctx.strokeStyle = '#818CF8';
-        ctx.lineWidth = 6;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(64, 38);
-        ctx.lineTo(64, 110);
-        ctx.stroke();
-
-        ctx.restore();
+        img.src = url;
       }
 
-      function roundRect(ctx, x, y, width, height, radius) {
-        ctx.beginPath();
-        ctx.moveTo(x + radius, y);
-        ctx.lineTo(x + width - radius, y);
-        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-        ctx.lineTo(x + width, y + height - radius);
-        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-        ctx.lineTo(x + radius, y + height);
-        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-        ctx.lineTo(x, y + radius);
-        ctx.quadraticCurveTo(x, y, x + radius, y);
-        ctx.closePath();
-      }
+      const container = document.getElementById('icons');
+      sizes.forEach((size) => {
+        const btn = document.createElement('button');
+        btn.textContent = `Download icon-${size}.png`;
+        btn.style.cssText = 'margin: 5px; padding: 10px 20px; font-size: 14px; cursor: pointer;';
+        btn.onclick = () => generateIcon(size);
+        container.appendChild(btn);
+        container.appendChild(document.createElement('br'));
+      });
 
-      // Draw all icons
-      drawIcon(document.getElementById('icon16'));
-      drawIcon(document.getElementById('icon32'));
-      drawIcon(document.getElementById('icon48'));
-      drawIcon(document.getElementById('icon128'));
+      // Auto-generate all icons button
+      const autoBtn = document.createElement('button');
+      autoBtn.textContent = 'Download All Icons';
+      autoBtn.style.cssText =
+        'margin: 10px 5px; padding: 12px 24px; font-size: 16px; font-weight: bold; background: #2563EB; color: white; border: none; border-radius: 6px; cursor: pointer;';
+      autoBtn.onclick = () => {
+        sizes.forEach((size, i) => {
+          setTimeout(() => generateIcon(size), i * 500);
+        });
+      };
+      container.appendChild(autoBtn);
     </script>
   </body>
 </html>
