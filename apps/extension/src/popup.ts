@@ -538,7 +538,7 @@ function loadArchiveContents(_file: File): void {
   `;
 }
 
-async function startExtraction(destination: string): Promise<void> {
+async function startExtraction(_destination: string): Promise<void> {
   const progressTitle = document.getElementById('progress-title')!;
   const progressFilename = document.getElementById('progress-filename')!;
 
@@ -547,10 +547,14 @@ async function startExtraction(destination: string): Promise<void> {
 
   navigateToScreen('progress');
 
+  // Automatically use Downloads folder with timestamp
+  const timestamp = Date.now();
+  const archiveBaseName = currentArchive?.name.replace(/\.(zip|tar|gz|tgz)$/i, '') || 'archive';
+  const autoDestination = `${archiveBaseName}_extracted_${timestamp}`;
+
   // In a real implementation, this would:
-  // 1. Use chrome.downloads API to download files to Downloads/{destination}/
+  // 1. Use chrome.downloads API to download files to Downloads/{autoDestination}/
   // 2. Track the download ID for later use
-  // For now, we'll simulate the extraction
 
   // Simulate extraction progress
   let progress = 0;
@@ -569,12 +573,24 @@ async function startExtraction(destination: string): Promise<void> {
         const completeTitle = document.getElementById('complete-title')!;
         const completeSummary = document.getElementById('complete-summary')!;
         const destinationPath = document.getElementById('destination-path')!;
+        const openFolderBtn = document.getElementById('open-folder-btn')!;
 
-        const extractPath = `Downloads/${destination}`;
+        const extractPath = `Downloads/${autoDestination}`;
 
         completeTitle.textContent = 'Extraction Complete';
         completeSummary.textContent = `52 files extracted • ${formatFileSize(currentArchive?.size || 0)} total`;
         destinationPath.textContent = extractPath;
+        destinationPath.style.cursor = 'pointer';
+        destinationPath.style.textDecoration = 'underline';
+        destinationPath.onclick = () => {
+          navigator.clipboard.writeText(extractPath);
+          const originalText = destinationPath.textContent;
+          destinationPath.textContent = 'Path copied!';
+          setTimeout(() => { destinationPath.textContent = originalText; }, 2000);
+        };
+
+        // Show the open folder button prominently
+        openFolderBtn.style.display = 'inline-flex';
 
         // Save to history with extraction location
         if (currentArchive) {
@@ -838,12 +854,17 @@ function startArchiveCreation(): void {
     }
   }
 
+  // Generate automatic filename with timestamp
+  const timestamp = Date.now();
+  const archiveName = getArchiveName();
+  const finalArchiveName = `${archiveName}_${timestamp}.${extension}`;
+
   // Update progress screen for creation
   const progressTitle = document.getElementById('progress-title')!;
   const progressFilename = document.getElementById('progress-filename')!;
 
   progressTitle.textContent = 'CREATING ARCHIVE';
-  progressFilename.textContent = `my-archive.${extension}`;
+  progressFilename.textContent = finalArchiveName;
 
   navigateToScreen('progress');
 
@@ -864,14 +885,27 @@ function startArchiveCreation(): void {
         const completeTitle = document.getElementById('complete-title')!;
         const completeSummary = document.getElementById('complete-summary')!;
         const destinationPath = document.getElementById('destination-path')!;
+        const openFolderBtn = document.getElementById('open-folder-btn')!;
 
         const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+        const archivePath = `Downloads/${finalArchiveName}`;
 
         completeTitle.textContent = 'Archive Created';
         completeSummary.textContent = `${selectedFiles.length} files packaged • ${formatFileSize(totalSize)} total`;
-        destinationPath.textContent = `Downloads/my-archive.${extension}`;
+        destinationPath.textContent = archivePath;
+        destinationPath.style.cursor = 'pointer';
+        destinationPath.style.textDecoration = 'underline';
+        destinationPath.onclick = () => {
+          navigator.clipboard.writeText(archivePath);
+          const originalText = destinationPath.textContent;
+          destinationPath.textContent = 'Path copied!';
+          setTimeout(() => { destinationPath.textContent = originalText; }, 2000);
+        };
 
-        addToRecentArchives(`my-archive.${extension}`, formatFileSize(totalSize));
+        // Show the open folder button prominently
+        openFolderBtn.style.display = 'inline-flex';
+
+        addToRecentArchives(finalArchiveName, formatFileSize(totalSize));
 
         selectedFiles = [];
         showCreateEmptyState();

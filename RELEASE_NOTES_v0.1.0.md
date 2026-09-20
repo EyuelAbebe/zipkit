@@ -1,4 +1,5 @@
 # ZipKit v0.1.0 - Release Notes
+
 ## Chrome Web Store Submission
 
 **Release Date**: September 10, 2026
@@ -73,6 +74,7 @@
 ## 🚀 Getting Started
 
 ### Creating an Archive
+
 1. Click the ZipKit icon
 2. Switch to "Create Archive" tab
 3. Click "Select Files" or drag files
@@ -81,6 +83,7 @@
 6. File saves to your Downloads folder
 
 ### Extracting an Archive
+
 1. Click the ZipKit icon
 2. Click "Open Archive"
 3. Select your archive file
@@ -114,18 +117,21 @@ Scans file names and content for known malware signatures and suspicious pattern
 ## 🎯 Use Cases
 
 ### Personal Use
+
 - Compress photos and documents for email
 - Extract downloaded software archives
 - Organize files for backup
 - Create compressed folders for storage
 
 ### Professional Use
+
 - Package project files for sharing
 - Extract client deliverables safely
 - Compress reports and presentations
 - Secure file handling for sensitive data
 
 ### Developer Use
+
 - Quick archive operations in workflow
 - Safe extraction of third-party libraries
 - Create deployment packages
@@ -136,12 +142,14 @@ Scans file names and content for known malware signatures and suspicious pattern
 ## 📊 Supported Formats
 
 ### Full Support
+
 - **ZIP**: Most common format, widely compatible
 - **TAR**: Unix/Linux standard, preserves permissions
 - **TAR.GZ**: Compressed TAR archives
 - **GZIP**: Single file compression
 
 ### Coming Soon
+
 - 7z (high compression)
 - RAR (universal format)
 - Encrypted archives (password protection)
@@ -165,16 +173,19 @@ Scans file names and content for known malware signatures and suspicious pattern
 ### Why We Need Them
 
 **Storage** 📦
+
 - Save your preferences and settings
 - Store extraction history locally
 - Remember your last used format
 
 **Downloads** ⬇️
+
 - Save extracted files to Downloads
 - Create archives in Downloads folder
 - No other file system access
 
 **ActiveTab** 📄
+
 - Access current page files for archiving
 - Only when you explicitly select files
 - No automatic data collection
@@ -184,16 +195,19 @@ Scans file names and content for known malware signatures and suspicious pattern
 ## 🐛 Known Limitations
 
 ### Current Version
+
 - Custom extraction directories not yet supported
 - Limited compression level options
 - Some advanced archive features pending
 
 ### Workarounds
+
 - Files extract to Downloads by default
 - Use system file manager to move files
 - Default compression levels work for most use cases
 
 ### Coming in Future Updates
+
 - File System Access API integration
 - Custom extraction locations
 - Advanced compression settings
@@ -204,17 +218,20 @@ Scans file names and content for known malware signatures and suspicious pattern
 ## 💡 Tips & Tricks
 
 ### Best Practices
+
 1. **Always check security badges** before extracting unknown archives
 2. **Review file tree** to see what's inside before extraction
 3. **Use appropriate formats**: ZIP for sharing, TAR.GZ for backups
 4. **Check history** to find previously extracted files
 
 ### Performance
+
 - Larger files may take a few seconds to process
 - Progress indicators show real-time status
 - Cancel operations anytime if needed
 
 ### Security
+
 - Never extract archives from untrusted sources without reviewing
 - Pay attention to security warnings
 - Report suspicious files to us via GitHub
@@ -238,6 +255,7 @@ Scans file names and content for known malware signatures and suspicious pattern
 → Large archives take time, check progress indicator
 
 ### Getting Help
+
 - Check our GitHub Issues
 - Read documentation
 - Submit bug reports with details
@@ -247,12 +265,14 @@ Scans file names and content for known malware signatures and suspicious pattern
 ## 🔄 Update Policy
 
 ### What to Expect
+
 - Regular security updates
 - New features based on feedback
 - Bug fixes within 48 hours of discovery
 - Major updates every 2-3 months
 
 ### How to Update
+
 Chrome updates extensions automatically. You'll always have the latest version.
 
 ---
@@ -285,4 +305,4 @@ Thank you for choosing ZipKit! We're committed to providing a secure, user-frien
 
 ---
 
-*Version 0.1.0 • September 2026 • Made with ❤️ for the Chrome community*
+_Version 0.1.0 • September 2026 • Made with ❤️ for the Chrome community_

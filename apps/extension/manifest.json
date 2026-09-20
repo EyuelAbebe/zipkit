@@ -1,11 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "ZipKit",
+  "name": "ZipKit - Archive Manager",
   "version": "0.0.0",
-  "description": "Zip. Unzip. Pack. Unpack. Inspect. Scan. A modern browser-based archive utility.",
+  "description": "Zip. Unzip. Pack. Unpack. Inspect. Scan. A modern, secure archive utility with built-in security scanning.",
+  "author": "Eyuel Abebe",
+  "homepage_url": "https://github.com/eyuelabebe/zipkit",
   "permissions": ["storage", "downloads"],
   "action": {
     "default_popup": "popup.html",
+    "default_title": "ZipKit - Archive Manager",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",

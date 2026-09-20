@@ -16,12 +16,14 @@ ZipKit v0.1.0 is the first public release of our Chrome extension for managing a
 ### ✨ Features Added
 
 #### Core Functionality
+
 - **Archive Creation**: Create ZIP, TAR, TAR.GZ, and other archive formats directly from selected files
 - **Archive Extraction**: Extract archives with automatic format detection and security scanning
 - **Multi-Format Support**: Support for ZIP, TAR, TAR.GZ, and GZIP formats
 - **Security Scanning**: Built-in malware detection, path traversal protection, and zip bomb prevention
 
 #### User Interface
+
 - **Dual Mode Interface**: Separate views for opening/extracting and creating archives
 - **File Tree Visualization**: Hierarchical view of archive contents with folder structure
 - **Scrollable File Lists**: Enhanced UX with scrollable file selection and sticky action buttons
@@ -30,6 +32,7 @@ ZipKit v0.1.0 is the first public release of our Chrome extension for managing a
 - **Security Badges**: Visual indicators for security scan results (safe, warning, danger)
 
 #### Developer Experience
+
 - **TypeScript Strict Mode**: Full type safety across the entire codebase
 - **Automated CI/CD Pipeline**: GitHub Actions for testing, building, and releasing
 - **Pre-commit Hooks**: Automatic code formatting and linting before commits

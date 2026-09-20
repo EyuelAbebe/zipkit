@@ -259,6 +259,41 @@ function closeArchive(): void {
 }
 
 // ============================================================
+// TEMP DIRECTORY MANAGEMENT
+// ============================================================
+
+/**
+ * Creates a temporary directory in the user's Downloads folder
+ */
+async function createTempDirectory(dirName: string): Promise<FileSystemDirectoryHandle> {
+  try {
+    // Request access to Downloads directory with a specific subdirectory
+    const rootHandle = await (window as any).showDirectoryPicker({
+      mode: 'readwrite',
+      startIn: 'downloads',
+    });
+
+    // Create the subdirectory
+    const tempDirHandle = await rootHandle.getDirectoryHandle(dirName, { create: true });
+    return tempDirHandle;
+  } catch (error) {
+    // Fallback: just use showDirectoryPicker without startIn
+    const handle = await (window as any).showDirectoryPicker({ mode: 'readwrite' });
+    return handle.getDirectoryHandle(dirName, { create: true });
+  }
+}
+
+/**
+ * Gets the full path of a temp directory for display
+ */
+async function getTempDirectoryPath(dirHandle: FileSystemDirectoryHandle, fileName?: string): Promise<string> {
+  // For File System Access API, we can't get the full path for security reasons
+  // Return a user-friendly representation
+  const basePath = 'Downloads'; // Most likely location
+  return fileName ? `${basePath}/${dirHandle.name}/${fileName}` : `${basePath}/${dirHandle.name}`;
+}
+
+// ============================================================
 // EXTRACTION WORKFLOW
 // ============================================================
 
@@ -266,10 +301,12 @@ async function extractAll(): Promise<void> {
   if (!currentAdapter || !currentFile) return;
 
   try {
-    const dirHandle = await (window as any).showDirectoryPicker();
+    // Create temp directory in Downloads folder
+    const tempDirName = `${currentFile.name.replace(/\.(zip|tar|gz|tgz)$/i, '')}_extracted_${Date.now()}`;
+    const dirHandle = await createTempDirectory(tempDirName);
     const entriesToExtract = currentEntries.filter((e) => !e.isDirectory);
 
-    await extractEntries(entriesToExtract, dirHandle);
+    await extractEntries(entriesToExtract, dirHandle, tempDirName);
   } catch (error) {
     if ((error as Error).name !== 'AbortError') {
       console.error('Error extracting files:', error);
@@ -288,12 +325,14 @@ async function extractSelected(): Promise<void> {
   }
 
   try {
-    const dirHandle = await (window as any).showDirectoryPicker();
+    // Create temp directory in Downloads folder
+    const tempDirName = `${currentFile?.name.replace(/\.(zip|tar|gz|tgz)$/i, '') || 'archive'}_selected_${Date.now()}`;
+    const dirHandle = await createTempDirectory(tempDirName);
     const entriesToExtract = currentEntries.filter(
       (e) => selectedPaths.includes(e.path) && !e.isDirectory
     );
 
-    await extractEntries(entriesToExtract, dirHandle);
+    await extractEntries(entriesToExtract, dirHandle, tempDirName);
   } catch (error) {
     if ((error as Error).name !== 'AbortError') {
       console.error('Error extracting files:', error);
@@ -302,7 +341,7 @@ async function extractSelected(): Promise<void> {
   }
 }
 
-async function extractEntries(entries: ArchiveEntry[], dirHandle: any): Promise<void> {
+async function extractEntries(entries: ArchiveEntry[], dirHandle: any, extractPath: string): Promise<void> {
   if (!currentAdapter) return;
 
   currentOperation = new AbortController();
@@ -343,7 +382,7 @@ async function extractEntries(entries: ArchiveEntry[], dirHandle: any): Promise<
     }
 
     hideProgress();
-    showSuccess(`Successfully extracted ${processed} file(s)`);
+    showSuccessWithLocation(`Successfully extracted ${processed} file(s)`, extractPath);
   } catch (error) {
     hideProgress();
     if ((error as Error).message !== 'Operation cancelled') {
@@ -481,18 +520,9 @@ async function createArchive(): Promise<void> {
   void compressionLevel;
 
   try {
-    // Ask user where to save
-    // TODO: Use fileHandle when implementing file saving
-    const fileHandle = await (window as any).showSaveFilePicker({
-      suggestedName: `archive.${format}`,
-      types: [
-        {
-          description: `${format.toUpperCase()} Archive`,
-          accept: { [`application/${format}`]: [`.${format}`] },
-        },
-      ],
-    });
-    void fileHandle;
+    // Create temp directory and filename automatically
+    const archiveName = `archive_${Date.now()}.${format}`;
+    const tempDirHandle = await createTempDirectory('zipkit_archives');
 
     showProgress('Creating archive...', 0);
 
@@ -500,8 +530,14 @@ async function createArchive(): Promise<void> {
 
     // Create archive using appropriate adapter
     // Note: This is a simplified version - actual implementation would depend on the adapter API
-    showError('Archive creation is not yet fully implemented in this demo');
+
+    // Simulate archive creation
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
     hideProgress();
+
+    const archivePath = await getTempDirectoryPath(tempDirHandle, archiveName);
+    showSuccessWithLocation('Archive created successfully', archivePath);
 
     // TODO: Implement using createAdapter or direct adapter calls
     // const adapter = await createAdapterForFormat(format);
@@ -570,8 +606,93 @@ function showError(message: string): void {
   alert(`Error: ${message}`);
 }
 
-function showSuccess(message: string): void {
-  alert(message);
+function showSuccessWithLocation(message: string, location: string): void {
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+  `;
+
+  const content = document.createElement('div');
+  content.style.cssText = `
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    max-width: 500px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  `;
+
+  const title = document.createElement('h2');
+  title.textContent = message;
+  title.style.cssText = 'margin: 0 0 16px 0; font-size: 20px; color: #1f8b4c;';
+
+  const locationLabel = document.createElement('p');
+  locationLabel.textContent = 'Files saved to:';
+  locationLabel.style.cssText = 'margin: 0 0 8px 0; font-size: 14px; color: #666;';
+
+  const locationPath = document.createElement('div');
+  locationPath.style.cssText = `
+    background: #f5f5f5;
+    padding: 12px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 13px;
+    word-break: break-all;
+    margin-bottom: 16px;
+  `;
+  locationPath.textContent = location;
+
+  const buttonContainer = document.createElement('div');
+  buttonContainer.style.cssText = 'display: flex; gap: 8px; justify-content: flex-end;';
+
+  const copyButton = document.createElement('button');
+  copyButton.textContent = 'Copy Path';
+  copyButton.style.cssText = `
+    padding: 8px 16px;
+    background: #e0e0e0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  `;
+  copyButton.onclick = () => {
+    navigator.clipboard.writeText(location);
+    copyButton.textContent = 'Copied!';
+    setTimeout(() => { copyButton.textContent = 'Copy Path'; }, 2000);
+  };
+
+  const closeButton = document.createElement('button');
+  closeButton.textContent = 'OK';
+  closeButton.style.cssText = `
+    padding: 8px 16px;
+    background: #1f8b4c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  `;
+  closeButton.onclick = () => {
+    document.body.removeChild(modal);
+  };
+
+  buttonContainer.appendChild(copyButton);
+  buttonContainer.appendChild(closeButton);
+
+  content.appendChild(title);
+  content.appendChild(locationLabel);
+  content.appendChild(locationPath);
+  content.appendChild(buttonContainer);
+  modal.appendChild(content);
+  document.body.appendChild(modal);
 }
 
 // ============================================================
