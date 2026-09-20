@@ -586,7 +586,9 @@ async function startExtraction(_destination: string): Promise<void> {
           navigator.clipboard.writeText(extractPath);
           const originalText = destinationPath.textContent;
           destinationPath.textContent = 'Path copied!';
-          setTimeout(() => { destinationPath.textContent = originalText; }, 2000);
+          setTimeout(() => {
+            destinationPath.textContent = originalText;
+          }, 2000);
         };
 
         // Show the open folder button prominently
@@ -899,7 +901,9 @@ function startArchiveCreation(): void {
           navigator.clipboard.writeText(archivePath);
           const originalText = destinationPath.textContent;
           destinationPath.textContent = 'Path copied!';
-          setTimeout(() => { destinationPath.textContent = originalText; }, 2000);
+          setTimeout(() => {
+            destinationPath.textContent = originalText;
+          }, 2000);
         };
 
         // Show the open folder button prominently

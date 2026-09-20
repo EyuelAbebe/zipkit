@@ -286,7 +286,10 @@ async function createTempDirectory(dirName: string): Promise<FileSystemDirectory
 /**
  * Gets the full path of a temp directory for display
  */
-async function getTempDirectoryPath(dirHandle: FileSystemDirectoryHandle, fileName?: string): Promise<string> {
+async function getTempDirectoryPath(
+  dirHandle: FileSystemDirectoryHandle,
+  fileName?: string
+): Promise<string> {
   // For File System Access API, we can't get the full path for security reasons
   // Return a user-friendly representation
   const basePath = 'Downloads'; // Most likely location
@@ -341,7 +344,11 @@ async function extractSelected(): Promise<void> {
   }
 }
 
-async function extractEntries(entries: ArchiveEntry[], dirHandle: any, extractPath: string): Promise<void> {
+async function extractEntries(
+  entries: ArchiveEntry[],
+  dirHandle: any,
+  extractPath: string
+): Promise<void> {
   if (!currentAdapter) return;
 
   currentOperation = new AbortController();
@@ -532,7 +539,7 @@ async function createArchive(): Promise<void> {
     // Note: This is a simplified version - actual implementation would depend on the adapter API
 
     // Simulate archive creation
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     hideProgress();
 
@@ -666,7 +673,9 @@ function showSuccessWithLocation(message: string, location: string): void {
   copyButton.onclick = () => {
     navigator.clipboard.writeText(location);
     copyButton.textContent = 'Copied!';
-    setTimeout(() => { copyButton.textContent = 'Copy Path'; }, 2000);
+    setTimeout(() => {
+      copyButton.textContent = 'Copy Path';
+    }, 2000);
   };
 
   const closeButton = document.createElement('button');
