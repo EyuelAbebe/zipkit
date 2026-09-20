@@ -1,0 +1,85 @@
+name: Publish to Chrome Web Store
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish_target:
+        description: 'Publish target (draft or trustedTesters)'
+        required: true
+        default: 'draft'
+        type: choice
+        options:
+          - draft
+          - trustedTesters
+  push:
+    tags:
+      - 'v*.*.*'
+      - '!v*.*.*-rc.*'
+
+jobs:
+  publish:
+    name: Publish Extension to Chrome Web Store
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: |
+          npm run typecheck
+          npm run lint
+          npm run test
+
+      - name: Build extension
+        run: npm run build
+
+      - name: Get version
+        id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Create ZIP package
+        run: |
+          cd apps/extension/dist
+          zip -r ../../../zipkit-v${{ steps.version.outputs.version }}.zip .
+          cd ../../..
+
+      - name: Upload to Chrome Web Store
+        uses: mnao305/chrome-extension-upload@v5.0.0
+        with:
+          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          file-path: zipkit-v${{ steps.version.outputs.version }}.zip
+          publish: ${{ github.event_name == 'push' || github.event.inputs.publish_target != 'draft' }}
+          publish-target: ${{ github.event.inputs.publish_target || 'default' }}
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: zipkit-v${{ steps.version.outputs.version }}.zip
+          body_path: RELEASE_NOTES_v${{ steps.version.outputs.version }}.md
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment on PR
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "✅ Extension published to Chrome Web Store!"
+          echo "📦 Version: ${{ steps.version.outputs.version }}"
+          echo "🎯 Target: ${{ github.event.inputs.publish_target }}"
