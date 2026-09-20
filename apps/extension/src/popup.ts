@@ -909,7 +909,8 @@ function startArchiveCreation(): void {
         // Show the open folder button prominently
         openFolderBtn.style.display = 'inline-flex';
 
-        addToRecentArchives(finalArchiveName, formatFileSize(totalSize));
+        // Add to recent archives with location
+        addToHistory(finalArchiveName, formatFileSize(totalSize), archivePath);
 
         selectedFiles = [];
         showCreateEmptyState();

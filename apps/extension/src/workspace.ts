@@ -263,37 +263,46 @@ function closeArchive(): void {
 // ============================================================
 
 /**
- * Creates a temporary directory in the user's Downloads folder
+ * Creates a temporary directory for extraction/archiving
+ * Uses OS-appropriate temp location with automatic subdirectory creation
  */
 async function createTempDirectory(dirName: string): Promise<FileSystemDirectoryHandle> {
   try {
-    // Request access to Downloads directory with a specific subdirectory
+    // Try to use Downloads folder as starting point
     const rootHandle = await (window as any).showDirectoryPicker({
       mode: 'readwrite',
       startIn: 'downloads',
     });
 
-    // Create the subdirectory
-    const tempDirHandle = await rootHandle.getDirectoryHandle(dirName, { create: true });
+    // Create ZipKit subdirectory
+    const zipkitDir = await rootHandle.getDirectoryHandle('ZipKit', { create: true });
+    // Create specific operation directory
+    const tempDirHandle = await zipkitDir.getDirectoryHandle(dirName, { create: true });
+
     return tempDirHandle;
   } catch (error) {
-    // Fallback: just use showDirectoryPicker without startIn
+    // Fallback: let user choose any directory
     const handle = await (window as any).showDirectoryPicker({ mode: 'readwrite' });
-    return handle.getDirectoryHandle(dirName, { create: true });
+    const zipkitDir = await handle.getDirectoryHandle('ZipKit', { create: true });
+    return zipkitDir.getDirectoryHandle(dirName, { create: true });
   }
 }
 
 /**
  * Gets the full path of a temp directory for display
+ * Returns a user-friendly path representation
  */
 async function getTempDirectoryPath(
   dirHandle: FileSystemDirectoryHandle,
   fileName?: string
 ): Promise<string> {
-  // For File System Access API, we can't get the full path for security reasons
-  // Return a user-friendly representation
-  const basePath = 'Downloads'; // Most likely location
-  return fileName ? `${basePath}/${dirHandle.name}/${fileName}` : `${basePath}/${dirHandle.name}`;
+  // Build path from directory handles
+  // Format: Downloads/ZipKit/{dirName}/{fileName}
+  const pathParts = ['Downloads', 'ZipKit', dirHandle.name];
+  if (fileName) {
+    pathParts.push(fileName);
+  }
+  return pathParts.join('/');
 }
 
 // ============================================================
