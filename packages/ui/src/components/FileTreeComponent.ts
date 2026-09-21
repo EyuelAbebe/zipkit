@@ -108,10 +108,18 @@ export class FileTreeComponent {
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.className = 'node-checkbox';
-      checkbox.checked = this.selectedPaths.has(child.path);
-      checkbox.addEventListener('change', () =>
-        this.handleCheckboxChange(child.path, checkbox.checked)
-      );
+
+      // For folders, check if all children are selected
+      if (child.isDirectory) {
+        checkbox.checked = this.areAllChildrenSelected(child);
+      } else {
+        checkbox.checked = this.selectedPaths.has(child.path);
+      }
+
+      checkbox.addEventListener('change', (e) => {
+        e.stopPropagation();
+        this.handleCheckboxChange(child.path, checkbox.checked);
+      });
 
       // Icon
       const icon = document.createElement('span');
@@ -157,14 +165,78 @@ export class FileTreeComponent {
   }
 
   private handleCheckboxChange(path: string, checked: boolean): void {
+    const node = this.findNode(this.root, path);
+    if (!node) return;
+
     if (checked) {
-      this.selectedPaths.add(path);
+      // Select this node and all children
+      this.selectNodeAndChildren(node);
     } else {
-      this.selectedPaths.delete(path);
+      // Deselect this node and all children
+      this.deselectNodeAndChildren(node);
     }
+
+    // Re-render to update checkbox states
+    this.render();
 
     if (this.onSelectionChange) {
       this.onSelectionChange(Array.from(this.selectedPaths));
+    }
+  }
+
+  private findNode(node: FileTreeNode, path: string): FileTreeNode | null {
+    if (node.path === path) {
+      return node;
+    }
+    if (node.children) {
+      for (const child of node.children) {
+        const found = this.findNode(child, path);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
+  private areAllChildrenSelected(node: FileTreeNode): boolean {
+    if (!node.children || node.children.length === 0) {
+      return false;
+    }
+
+    for (const child of node.children) {
+      if (child.isDirectory) {
+        if (!this.areAllChildrenSelected(child)) {
+          return false;
+        }
+      } else {
+        if (!this.selectedPaths.has(child.path)) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  private selectNodeAndChildren(node: FileTreeNode): void {
+    // Add files to selection (including the current node if it's a file)
+    if (!node.isDirectory) {
+      this.selectedPaths.add(node.path);
+    }
+
+    // Recursively select all children
+    if (node.children) {
+      for (const child of node.children) {
+        this.selectNodeAndChildren(child);
+      }
+    }
+  }
+
+  private deselectNodeAndChildren(node: FileTreeNode): void {
+    this.selectedPaths.delete(node.path);
+    if (node.children) {
+      for (const child of node.children) {
+        this.deselectNodeAndChildren(child);
+      }
     }
   }
 

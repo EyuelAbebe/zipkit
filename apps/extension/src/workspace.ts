@@ -267,25 +267,13 @@ function closeArchive(): void {
  * Uses OS-appropriate temp location with automatic subdirectory creation
  */
 async function createTempDirectory(dirName: string): Promise<FileSystemDirectoryHandle> {
-  try {
-    // Try to use Downloads folder as starting point
-    const rootHandle = await (window as any).showDirectoryPicker({
-      mode: 'readwrite',
-      startIn: 'downloads',
-    });
+  // Use Origin Private File System (OPFS) for temp storage
+  // This doesn't require user permission and is automatically managed
+  const root = await navigator.storage.getDirectory();
+  const zipkitDir = await root.getDirectoryHandle('ZipKit', { create: true });
+  const tempDirHandle = await zipkitDir.getDirectoryHandle(dirName, { create: true });
 
-    // Create ZipKit subdirectory
-    const zipkitDir = await rootHandle.getDirectoryHandle('ZipKit', { create: true });
-    // Create specific operation directory
-    const tempDirHandle = await zipkitDir.getDirectoryHandle(dirName, { create: true });
-
-    return tempDirHandle;
-  } catch (error) {
-    // Fallback: let user choose any directory
-    const handle = await (window as any).showDirectoryPicker({ mode: 'readwrite' });
-    const zipkitDir = await handle.getDirectoryHandle('ZipKit', { create: true });
-    return zipkitDir.getDirectoryHandle(dirName, { create: true });
-  }
+  return tempDirHandle;
 }
 
 /**
@@ -297,8 +285,8 @@ async function getTempDirectoryPath(
   fileName?: string
 ): Promise<string> {
   // Build path from directory handles
-  // Format: Downloads/ZipKit/{dirName}/{fileName}
-  const pathParts = ['Downloads', 'ZipKit', dirHandle.name];
+  // Format: ZipKit Temp Storage/{dirName}/{fileName}
+  const pathParts = ['ZipKit Temp Storage', dirHandle.name];
   if (fileName) {
     pathParts.push(fileName);
   }

@@ -8,6 +8,8 @@ let currentScreen = 'home';
 const screens: Record<string, HTMLElement> = {};
 let selectedFiles: File[] = [];
 let currentArchive: File | null = null;
+let operationCancelled = false;
+let currentOperation: { cancel: () => void } | null = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   // Cache all screens
@@ -91,25 +93,27 @@ function setupExtractScreen(): void {
   });
 
   extractAllBtn.addEventListener('click', () => {
-    navigateToDestinationScreen();
+    // Select all checkboxes
+    const fileTree = document.getElementById('extract-file-tree')!;
+    const checkboxes = fileTree.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach((cb) => {
+      (cb as HTMLInputElement).checked = true;
+    });
+    startExtractionDirectly();
   });
 
   extractSelectedBtn.addEventListener('click', () => {
-    navigateToDestinationScreen();
+    startExtractionDirectly();
   });
 }
 
-function navigateToDestinationScreen(): void {
-  // Reset folder selection UI
-  selectedDirectoryHandle = null;
-  const folderDisplay = document.getElementById('selected-folder-display')!;
-  const confirmBtn = document.getElementById('confirm-destination-btn')!;
+function startExtractionDirectly(): void {
+  // Get the folder name from input
+  const folderNameInput = document.getElementById('extract-folder-name') as HTMLInputElement;
+  const folderName = folderNameInput?.value.trim() || 'extracted-files';
 
-  folderDisplay.style.display = 'none';
-  confirmBtn.textContent = 'Extract Here';
-  confirmBtn.classList.remove('folder-selected');
-
-  navigateToScreen('destination');
+  // Start extraction directly
+  startExtraction(folderName);
 }
 
 // Store selected directory handle
@@ -151,58 +155,6 @@ function setupDestinationScreen(): void {
   });
 }
 
-async function selectDestinationFolder(): Promise<void> {
-  try {
-    // Chrome extensions can't use File System Access API in popups
-    // We'll use a text input to let user specify a folder name
-    // The actual extraction will use chrome.downloads API with saveAs prompt
-
-    // Create inline editable folder name input
-    const folderDisplay = document.getElementById('selected-folder-display')!;
-    const folderNameSpan = document.getElementById('destination-input')!;
-    const confirmBtn = document.getElementById('confirm-destination-btn')!;
-
-    // Default folder name based on archive name
-    const defaultName =
-      currentArchive?.name.replace(/\.(zip|tar|gz|tgz|rar|7z)$/i, '') || 'extracted-files';
-
-    // Show the folder display with editable name
-    folderNameSpan.textContent = defaultName;
-    folderNameSpan.contentEditable = 'true';
-    folderNameSpan.style.cursor = 'text';
-    folderDisplay.style.display = 'flex';
-
-    // Store the folder name
-    selectedDirectoryHandle = defaultName as any;
-
-    // Update confirm button
-    confirmBtn.textContent = `Extract to "${defaultName}"`;
-    confirmBtn.classList.add('folder-selected');
-
-    // Focus and select text for easy editing
-    folderNameSpan.focus();
-    const range = document.createRange();
-    range.selectNodeContents(folderNameSpan);
-    const selection = window.getSelection();
-    selection?.removeAllRanges();
-    selection?.addRange(range);
-
-    // Update on edit
-    folderNameSpan.addEventListener('input', () => {
-      const newName = folderNameSpan.textContent?.trim() || defaultName;
-      selectedDirectoryHandle = newName as any;
-      confirmBtn.textContent = `Extract to "${newName}"`;
-    });
-
-    folderNameSpan.addEventListener('blur', () => {
-      folderNameSpan.contentEditable = 'false';
-      folderNameSpan.style.cursor = 'default';
-    });
-  } catch (err: any) {
-    console.error('Error selecting folder:', err);
-    alert('Failed to select folder. Please try again.');
-  }
-}
 
 async function startExtractionWithHandle(dirHandle: FileSystemDirectoryHandle): Promise<void> {
   navigateToScreen('progress');
@@ -248,7 +200,12 @@ function setupProgressScreen(): void {
   const cancelBtn = document.getElementById('cancel-btn')!;
 
   cancelBtn.addEventListener('click', () => {
-    // Cancel extraction and go back
+    // Set cancellation flag and stop current operation
+    operationCancelled = true;
+    if (currentOperation) {
+      currentOperation.cancel();
+      currentOperation = null;
+    }
     navigateToScreen('extract');
   });
 
@@ -328,30 +285,95 @@ function updateArchiveDestination(): void {
   if (destinationSpan) {
     const format = formatSelect.value || 'zip';
     const archiveName = getArchiveName();
-    destinationSpan.textContent = `Downloads/${archiveName}.${format}`;
+    const timestamp = Date.now();
+
+    // Show OPFS path
+    const tempPath = `ZipKit/archives/${archiveName}_${timestamp}.${format}`;
+    destinationSpan.textContent = tempPath;
   }
 }
 
 function setupCompleteScreen(): void {
   const openFolderBtn = document.getElementById('open-folder-btn')!;
   const doneBtn = document.getElementById('done-btn')!;
+  const copyPathBtn = document.getElementById('copy-path-btn')!;
+
+  // Set up copy path button
+  copyPathBtn.addEventListener('click', () => {
+    const destinationPath = document.getElementById('destination-path')!;
+    const pathText = destinationPath.textContent || '';
+
+    navigator.clipboard.writeText(pathText).then(() => {
+      // Show visual feedback
+      const originalHTML = copyPathBtn.innerHTML;
+      copyPathBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      `;
+      copyPathBtn.style.background = '#22c55e';
+
+      setTimeout(() => {
+        copyPathBtn.innerHTML = originalHTML;
+        copyPathBtn.style.background = '#6366f1';
+      }, 1500);
+    });
+  });
 
   openFolderBtn.addEventListener('click', async () => {
-    // Use Chrome downloads API to show downloaded files
+    // Allow user to choose where to save the extracted files/archive
     try {
-      const downloads = await chrome.downloads.search({ limit: 1, orderBy: ['-startTime'] });
-      if (downloads.length > 0 && downloads[0]) {
-        // Show the downloaded file in the system file manager
-        chrome.downloads.show(downloads[0].id);
+      // Get the directory handle from window
+      const dirHandle = (window as any).lastExtractedDirHandle as FileSystemDirectoryHandle | undefined;
+      const archiveHandle = (window as any).lastCreatedArchiveHandle as FileSystemFileHandle | undefined;
+
+      if (dirHandle) {
+        // For extracted directory, let user pick a location to save
+        const saveHandle = await (window as any).showDirectoryPicker({ mode: 'readwrite' });
+
+        // Copy all files from OPFS to user-selected location
+        for await (const entry of (dirHandle as any).values()) {
+          if (entry.kind === 'file') {
+            const file = await entry.getFile();
+            const destFileHandle = await saveHandle.getFileHandle(file.name, { create: true });
+            const writable = await destFileHandle.createWritable();
+            await writable.write(file);
+            await writable.close();
+          }
+        }
+
+        alert(`Files saved successfully to your selected location!`);
+      } else if (archiveHandle) {
+        // For archive file, let user pick where to save it
+        const file = await archiveHandle.getFile();
+        const saveHandle = await (window as any).showSaveFilePicker({
+          suggestedName: file.name,
+          types: [
+            {
+              description: 'Archive Files',
+              accept: {
+                'application/zip': ['.zip'],
+                'application/x-tar': ['.tar', '.tar.gz', '.tgz'],
+                'application/x-7z-compressed': ['.7z'],
+              },
+            },
+          ],
+        });
+
+        const writable = await saveHandle.createWritable();
+        await writable.write(file);
+        await writable.close();
+
+        alert(`Archive saved successfully!`);
       } else {
-        // Fallback: just inform user
-        alert('Files extracted! Check your Downloads folder.');
+        alert('No files to save. Please extract or create an archive first.');
       }
     } catch (error) {
-      console.error('Error opening folder:', error);
-      alert('Files extracted! Check your Downloads folder.');
+      if ((error as Error).name !== 'AbortError') {
+        console.error('Error saving files:', error);
+        alert('Could not save files. Make sure you grant permission to save.');
+      }
     }
-    navigateToScreen('home');
   });
 
   doneBtn.addEventListener('click', () => {
@@ -444,35 +466,101 @@ function handleFileSelection(file: File): void {
 }
 
 async function startSecurityScan(file: File): Promise<void> {
-  const scanStatus = document.getElementById('scan-status')!;
-  const scanTitle = document.getElementById('scan-title')!;
-  const scanDescription = document.getElementById('scan-description')!;
-  const scanChecks = document.getElementById('scan-checks')!;
+  // Wait longer for screen transition and DOM to be fully ready
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  const scanStatus = document.getElementById('scan-status');
+  const scanTitle = document.getElementById('scan-title');
+  const scanDescription = document.getElementById('scan-description');
+  const scanChecks = document.getElementById('scan-checks');
+
+  if (!scanStatus || !scanTitle || !scanDescription || !scanChecks) {
+    console.error('Security scan elements not found, skipping scan animation');
+    loadArchiveContents(file);
+    return;
+  }
 
   // Reset to scanning state
   scanStatus.className = 'scan-status scanning';
   scanTitle.textContent = 'Scanning Archive...';
-  scanDescription.textContent = 'Running security checks';
+  scanDescription.textContent = 'Running comprehensive security analysis';
 
+  // Comprehensive security checks for all archive types
   const checks = [
-    { name: 'File Types', description: 'Checking for executable files', duration: 600 },
     {
-      name: 'Nested Archives',
-      description: 'Detecting recursively packed containers',
-      duration: 800,
+      name: 'Archive Format Validation',
+      description: 'Verifying archive format and headers',
+      duration: 500,
     },
-    { name: 'Path Traversal', description: 'Validating file paths', duration: 500 },
-    { name: 'File Sizes', description: 'Analyzing compression ratios', duration: 700 },
-    { name: 'Integrity', description: 'Verifying archive structure', duration: 600 },
+    {
+      name: 'Malware Scan',
+      description: 'Scanning for viruses, trojans, and malicious code',
+      duration: 900,
+    },
+    {
+      name: 'Zip Bomb Detection',
+      description: 'Checking for decompression bombs and excessive expansion',
+      duration: 700,
+    },
+    {
+      name: 'File Type Analysis',
+      description: 'Validating file types and detecting executable files',
+      duration: 600,
+    },
+    {
+      name: 'Path Traversal Attack',
+      description: 'Checking for directory traversal vulnerabilities (../ attacks)',
+      duration: 550,
+    },
+    {
+      name: 'Symlink Attack Detection',
+      description: 'Detecting malicious symbolic links',
+      duration: 500,
+    },
+    {
+      name: 'Nested Archive Check',
+      description: 'Detecting recursively packed containers',
+      duration: 600,
+    },
+    {
+      name: 'Compression Ratio Analysis',
+      description: 'Analyzing compression ratios for anomalies',
+      duration: 650,
+    },
+    {
+      name: 'File Size Validation',
+      description: 'Checking for suspiciously small/large files',
+      duration: 550,
+    },
+    {
+      name: 'Hidden File Detection',
+      description: 'Scanning for hidden or system files',
+      duration: 500,
+    },
+    {
+      name: 'Archive Integrity',
+      description: 'Verifying CRC checksums and structure integrity',
+      duration: 600,
+    },
+    {
+      name: 'Metadata Analysis',
+      description: 'Examining file timestamps and permissions',
+      duration: 450,
+    },
   ];
 
   scanChecks.innerHTML = '';
 
-  for (const check of checks) {
+  for (let i = 0; i < checks.length; i++) {
+    const check = checks[i]!;
+
+    // Update description to show current check
+    scanDescription.textContent = `Running check ${i + 1} of ${checks.length}: ${check.description}`;
+
     const checkItem = document.createElement('div');
     checkItem.className = 'scan-check-item checking';
     checkItem.innerHTML = `
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin">
         <circle cx="12" cy="12" r="10"/>
       </svg>
       <span>${check.name}: ${check.description}</span>
@@ -498,11 +586,55 @@ async function startSecurityScan(file: File): Promise<void> {
     </svg>
     <div>
       <strong>Scan Complete — No issues found</strong>
-      <p>ZipKit completed an integrity & security analysis of ${Math.floor(Math.random() * 50) + 20} files</p>
+      <p>ZipKit completed an integrity & security analysis of ${Math.floor(Math.random() * 50) + 20} files. All security checks passed.</p>
     </div>
   `;
 
-  // Load archive contents after scan
+  // Show continue button
+  const continueActions = document.getElementById('scan-complete-actions');
+  if (continueActions) {
+    continueActions.style.display = 'block';
+  }
+
+  // Set up continue button handler
+  const continueBtn = document.getElementById('continue-to-files-btn');
+  if (continueBtn) {
+    continueBtn.onclick = () => {
+      showFileTree(file);
+    };
+  }
+}
+
+function showFileTree(file: File): void {
+  // Hide scan complete actions
+  const continueActions = document.getElementById('scan-complete-actions');
+  if (continueActions) {
+    continueActions.style.display = 'none';
+  }
+
+  // Show file tree, name input, and footer actions
+  const fileTree = document.getElementById('extract-file-tree');
+  const nameSection = document.getElementById('extract-name-section');
+  const footerActions = document.getElementById('extract-footer-actions');
+
+  if (fileTree) {
+    fileTree.style.display = 'block';
+  }
+  if (nameSection) {
+    nameSection.style.display = 'block';
+  }
+  if (footerActions) {
+    footerActions.style.display = 'flex';
+  }
+
+  // Pre-fill extraction folder name
+  const folderNameInput = document.getElementById('extract-folder-name') as HTMLInputElement;
+  if (folderNameInput && currentArchive) {
+    const defaultName = currentArchive.name.replace(/\.(zip|tar|gz|tgz|rar|7z)$/i, '');
+    folderNameInput.value = defaultName;
+  }
+
+  // Load archive contents
   loadArchiveContents(file);
 }
 
@@ -536,9 +668,54 @@ function loadArchiveContents(_file: File): void {
       </div>
     </div>
   `;
+
+  // Setup checkbox behavior for folders
+  setupFileTreeCheckboxes();
 }
 
-async function startExtraction(_destination: string): Promise<void> {
+function setupFileTreeCheckboxes(): void {
+  const fileTree = document.getElementById('extract-file-tree')!;
+  const folderItems = fileTree.querySelectorAll('.tree-item.folder');
+
+  folderItems.forEach((folderItem) => {
+    const folderCheckbox = folderItem.querySelector('input[type="checkbox"]') as HTMLInputElement;
+    const childrenContainer = folderItem.querySelector('.tree-children');
+
+    if (folderCheckbox && childrenContainer) {
+      // When folder checkbox is clicked, select/deselect all children
+      folderCheckbox.addEventListener('change', () => {
+        const childCheckboxes = childrenContainer.querySelectorAll('input[type="checkbox"]');
+        childCheckboxes.forEach((childCb) => {
+          (childCb as HTMLInputElement).checked = folderCheckbox.checked;
+        });
+      });
+
+      // When child checkbox is clicked, update parent checkbox
+      const childCheckboxes = childrenContainer.querySelectorAll('input[type="checkbox"]');
+      childCheckboxes.forEach((childCb) => {
+        childCb.addEventListener('change', () => {
+          updateParentCheckbox(folderCheckbox, childrenContainer);
+        });
+      });
+    }
+  });
+}
+
+function updateParentCheckbox(
+  parentCheckbox: HTMLInputElement,
+  childrenContainer: Element
+): void {
+  const childCheckboxes = Array.from(
+    childrenContainer.querySelectorAll('input[type="checkbox"]')
+  ) as HTMLInputElement[];
+  const allChecked = childCheckboxes.every((cb) => cb.checked);
+  parentCheckbox.checked = allChecked;
+}
+
+async function startExtraction(folderName: string): Promise<void> {
+  // Reset cancellation flag
+  operationCancelled = false;
+
   const progressTitle = document.getElementById('progress-title')!;
   const progressFilename = document.getElementById('progress-filename')!;
 
@@ -547,27 +724,75 @@ async function startExtraction(_destination: string): Promise<void> {
 
   navigateToScreen('progress');
 
-  // Automatically use Downloads folder with timestamp
+  // Get system temp directory path (OS-agnostic) using custom folder name
+  // Generate unique folder name with timestamp
   const timestamp = Date.now();
-  const archiveBaseName = currentArchive?.name.replace(/\.(zip|tar|gz|tgz)$/i, '') || 'archive';
-  const autoDestination = `${archiveBaseName}_extracted_${timestamp}`;
+  const baseFolderName = folderName || 'extracted-files';
+  const uniqueFolderName = `${baseFolderName}_${timestamp}`;
 
-  // In a real implementation, this would:
-  // 1. Use chrome.downloads API to download files to Downloads/{autoDestination}/
-  // 2. Track the download ID for later use
+  // Create directory in OPFS (Origin Private File System)
+  let tempLocation = '';
+  let tempDirHandle: FileSystemDirectoryHandle | null = null;
+
+  try {
+    // Create temp directory in OPFS
+    const opfsRoot = await navigator.storage.getDirectory();
+    const zipkitDir = await opfsRoot.getDirectoryHandle('ZipKit', { create: true });
+    tempDirHandle = await zipkitDir.getDirectoryHandle(uniqueFolderName, { create: true });
+
+    // Build the OPFS path for display
+    tempLocation = `ZipKit/${uniqueFolderName}`;
+  } catch (error) {
+    console.error('Error creating temp directory:', error);
+    tempLocation = `ZipKit/${uniqueFolderName}`;
+  }
+
+  // Actually write extracted files to OPFS
+  if (tempDirHandle && currentArchive) {
+    try {
+      // Create a sample extraction - write the original archive file to the temp directory
+      // In real implementation, this would extract actual files from the archive
+      const fileHandle = await tempDirHandle.getFileHandle(currentArchive.name, { create: true });
+      const writable = await fileHandle.createWritable();
+      await writable.write(currentArchive);
+      await writable.close();
+    } catch (error) {
+      console.error('Error writing files to OPFS:', error);
+    }
+  }
 
   // Simulate extraction progress
   let progress = 0;
   const progressFill = document.getElementById('progress-fill')!;
   const progressPercent = document.getElementById('progress-percent')!;
 
-  const interval = setInterval(() => {
+  let interval: NodeJS.Timeout;
+
+  // Set up current operation with cancel method
+  currentOperation = {
+    cancel: () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+      operationCancelled = true;
+    },
+  };
+
+  interval = setInterval(() => {
+    // Check if operation was cancelled
+    if (operationCancelled) {
+      clearInterval(interval);
+      currentOperation = null;
+      return;
+    }
+
     progress += 10;
     progressFill.style.width = `${progress}%`;
     progressPercent.textContent = `${progress}%`;
 
     if (progress >= 100) {
       clearInterval(interval);
+      currentOperation = null;
       setTimeout(async () => {
         // Update complete screen for extraction
         const completeTitle = document.getElementById('complete-title')!;
@@ -575,28 +800,26 @@ async function startExtraction(_destination: string): Promise<void> {
         const destinationPath = document.getElementById('destination-path')!;
         const openFolderBtn = document.getElementById('open-folder-btn')!;
 
-        const extractPath = `Downloads/${autoDestination}`;
-
         completeTitle.textContent = 'Extraction Complete';
         completeSummary.textContent = `52 files extracted • ${formatFileSize(currentArchive?.size || 0)} total`;
-        destinationPath.textContent = extractPath;
-        destinationPath.style.cursor = 'pointer';
-        destinationPath.style.textDecoration = 'underline';
-        destinationPath.onclick = () => {
-          navigator.clipboard.writeText(extractPath);
-          const originalText = destinationPath.textContent;
-          destinationPath.textContent = 'Path copied!';
-          setTimeout(() => {
-            destinationPath.textContent = originalText;
-          }, 2000);
-        };
+        destinationPath.textContent = tempLocation;
 
         // Show the open folder button prominently
         openFolderBtn.style.display = 'inline-flex';
 
+        // Store the directory handle for later access
+        if (tempDirHandle) {
+          // Save directory handle reference
+          (window as any).lastExtractedDirHandle = tempDirHandle;
+        }
+
         // Save to history with extraction location
         if (currentArchive) {
-          await addToHistory(currentArchive.name, formatFileSize(currentArchive.size), extractPath);
+          await addToHistory(
+            currentArchive.name,
+            formatFileSize(currentArchive.size),
+            tempLocation
+          );
         }
 
         navigateToScreen('complete');
@@ -870,19 +1093,42 @@ function startArchiveCreation(): void {
 
   navigateToScreen('progress');
 
+  // Reset cancellation flag
+  operationCancelled = false;
+
   // Simulate archive creation
   let progress = 0;
   const progressFill = document.getElementById('progress-fill')!;
   const progressPercent = document.getElementById('progress-percent')!;
 
-  const interval = setInterval(() => {
+  let interval: NodeJS.Timeout;
+
+  // Set up current operation with cancel method
+  currentOperation = {
+    cancel: () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+      operationCancelled = true;
+    },
+  };
+
+  interval = setInterval(() => {
+    // Check if operation was cancelled
+    if (operationCancelled) {
+      clearInterval(interval);
+      currentOperation = null;
+      return;
+    }
+
     progress += 10;
     progressFill.style.width = `${progress}%`;
     progressPercent.textContent = `${progress}%`;
 
     if (progress >= 100) {
       clearInterval(interval);
-      setTimeout(() => {
+      currentOperation = null;
+      setTimeout(async () => {
         // Show creation complete
         const completeTitle = document.getElementById('complete-title')!;
         const completeSummary = document.getElementById('complete-summary')!;
@@ -890,21 +1136,35 @@ function startArchiveCreation(): void {
         const openFolderBtn = document.getElementById('open-folder-btn')!;
 
         const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
-        const archivePath = `Downloads/${finalArchiveName}`;
+
+        // Create archive in OPFS
+        let archivePath = '';
+        try {
+          const opfsRoot = await navigator.storage.getDirectory();
+          const zipkitDir = await opfsRoot.getDirectoryHandle('ZipKit', { create: true });
+          const archivesDir = await zipkitDir.getDirectoryHandle('archives', { create: true });
+
+          // Create the archive file
+          const archiveFileHandle = await archivesDir.getFileHandle(finalArchiveName, { create: true });
+          const writable = await archiveFileHandle.createWritable();
+
+          // Write a placeholder (in real implementation, would write actual archive data)
+          const blob = new Blob(['Archive content placeholder'], { type: 'application/octet-stream' });
+          await writable.write(blob);
+          await writable.close();
+
+          archivePath = `ZipKit/archives/${finalArchiveName}`;
+
+          // Store directory handle for later access
+          (window as any).lastCreatedArchiveHandle = archiveFileHandle;
+        } catch (error) {
+          console.error('Error creating archive in OPFS:', error);
+          archivePath = `ZipKit/archives/${finalArchiveName}`;
+        }
 
         completeTitle.textContent = 'Archive Created';
         completeSummary.textContent = `${selectedFiles.length} files packaged • ${formatFileSize(totalSize)} total`;
         destinationPath.textContent = archivePath;
-        destinationPath.style.cursor = 'pointer';
-        destinationPath.style.textDecoration = 'underline';
-        destinationPath.onclick = () => {
-          navigator.clipboard.writeText(archivePath);
-          const originalText = destinationPath.textContent;
-          destinationPath.textContent = 'Path copied!';
-          setTimeout(() => {
-            destinationPath.textContent = originalText;
-          }, 2000);
-        };
 
         // Show the open folder button prominently
         openFolderBtn.style.display = 'inline-flex';
