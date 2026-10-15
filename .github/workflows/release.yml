@@ -80,7 +80,7 @@ jobs:
           sha256sum zipkit-extension.zip > zipkit-extension.zip.sha256
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-artifacts
           path: |
